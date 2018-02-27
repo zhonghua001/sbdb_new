@@ -400,7 +400,7 @@ def customer_add(request):
         # py_compile.compile(customers_back_file)
         return HttpResponse(request.url_root+str('customers_back_file'+'c').split('BackManage')[1])
     else:
-        backhost = BackupHostConf.objects.all()
+        back_hosts = BackupHostConf.objects.all()
         return render(request, 'bkrs/base.html', locals())
 
 #

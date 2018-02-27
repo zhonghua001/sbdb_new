@@ -72,7 +72,7 @@ class Binlog2sql(object):
         try:
             count=0
             for binlogevent in stream:
-                print datetime.datetime.fromtimestamp(binlogevent.timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                # print datetime.datetime.fromtimestamp(binlogevent.timestamp).strftime('%Y-%m-%d %H:%M:%S')
                 if count>=self.countnum:
                     break
                 if not self.stopnever:
@@ -324,13 +324,14 @@ if __name__ == '__main__':
     port = 3308
     user = 'admin_user'
     password = 'qweQWE123$%^'
-    startFile = 'mysql-bin.000005'
-    startPos = 3223711
+    startFile = 'mysql-bin.000042'
+    startPos = 4
     connectionSettings = {'host':host, 'port':port, 'user':user, 'passwd':password}
     binlog2sql = Binlog2sql(connectionSettings=connectionSettings, startFile=startFile,
                             startPos=startPos, endFile='', endPos=0,
-                            startTime='', stopTime='', only_schemas='',
-                            only_tables='', nopk=False, flashback=False, stopnever=False,countnum=1)
+                            startTime='2018-02-28 15:00:21', stopTime='2018-02-27 12:00:32', only_schemas='',
+                            only_tables='', nopk=False, flashback=False, stopnever=False,countnum=20)
 
     binlog2sql.process_binlog()
+    print binlog2sql.sqllist
 

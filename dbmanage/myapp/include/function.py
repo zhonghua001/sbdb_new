@@ -838,16 +838,16 @@ def get_usergp_list():
     grouplist = Group.objects.all().order_by('name')
     return grouplist
 
-def get_diff(dbtag1,tb1,dbtag2,tb2):
+def get_diff(db_account_duibi,db_name_duibi,tb_duibi,db_account_canzhao,db_name_canzhao,tb_canzhao):
 
     if os.path.isfile(path_mysqldiff) :
-        tar_host1, tar_port1, tar_username1, tar_passwd1,tar_dbname1 = get_conn_info(dbtag1)
-        tar_host2, tar_port2, tar_username2, tar_passwd2,tar_dbname2 = get_conn_info(dbtag2)
+        tar_host1, tar_port1, tar_username1, tar_passwd1, = get_conn_info(db_account_duibi)
+        tar_host2, tar_port2, tar_username2, tar_passwd2, = get_conn_info(db_account_canzhao)
 
         server1 = ' -q --server1={}:{}@{}:{}'.format(tar_username1,tar_passwd1,tar_host1,str(tar_port1))
         server2 = ' --server2={}:{}@{}:{}'.format(tar_username2,tar_passwd2,tar_host2,str(tar_port2))
         option = ' --difftype=sql'
-        table = ' {}.{}:{}.{}'.format(tar_dbname1,tb1,tar_dbname2,tb2)
+        table = ' {}.{}:{}.{}'.format(db_name_duibi,tb_duibi,db_name_canzhao,tb_canzhao)
         cmd = path_mysqldiff + server1 + server2 + option + table
         output = os.popen(cmd)
         result = output.read()
@@ -857,26 +857,20 @@ def get_diff(dbtag1,tb1,dbtag2,tb2):
 
     return result
 
-def get_conn_info(hosttag):
-    a = Db_name.objects.filter(dbtag=hosttag)[0]
+def get_conn_info(db_account):
+    instance = Db_account.instance
+    tar_host = instance.ip
+    tar_port = instance.port
+    tar_username = db_account.user
+
     #a = Db_name.objects.get(dbtag=hosttag)
-    tar_dbname = a.dbname
     #如果instance中有备库role='read'，则选择从备库读取
-    try:
-        if a.instance.all().filter(role='read')[0]:
-            tar_host = a.instance.all().filter(role='read')[0].ip
-            tar_port = a.instance.all().filter(role='read')[0].port
-    #如果没有设置或没有role=read，则选择第一个读到的实例读取
-    except Exception,e:
-        tar_host = a.instance.filter(role__in=['write','all'])[0].ip
-        tar_port = a.instance.filter(role__in=['write','all'])[0].port
+
     pc = prpcrypt()
-    for i in a.db_account_set.all():
-        if i.role == 'admin':
-            tar_username = i.user
-            tar_passwd = pc.decrypt(i.passwd)
-            break
-    return tar_host,tar_port,tar_username,tar_passwd,tar_dbname
+
+    tar_passwd = pc.decrypt(db_account.passwd)
+
+    return tar_host,tar_port,tar_username,tar_passwd
 
 
 

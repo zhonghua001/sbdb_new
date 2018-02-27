@@ -21,33 +21,62 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3">
-
-                        <select onchange="Change1()" id="dbid1" class="form-control col-md-1" title="选择比对库" name = "choosedb1">
-                            <option value ="">----------</option>
-                            {% for obj in objlist %}
-                                {% if obj == choosed_host1 %}
-                                    <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
+                    <div class="col-md-6">
+                    <select id="id_select_group_duibi" onchange="change_group(-1,{{ select_group_duibi|default:0 }},'{{ select_host_duibi|default:0 }}','duibi')" class="form-control col-md-12"  name = "select_group_duibi">
+                        <option value ="" selected disabled >----Select Host Group----</option>
+                            {% for group in host_group %}
+                                {% if group.id == select_group_duibi %}
+                                    <option selected="selected" value ="{{ group.id }}">{{ group.name }}</option>
                                 {% else %}
-                                    <option value ="{{ obj }}">{{ obj }}</option>
+                                    <option value ="{{ group.id }}">{{ group.name }}</option>
                                 {% endif %}
                             {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select id="tbid1" class="form-control col-md-1" title="选择比对表"  name = "choosetb1">
+                    </select>
+
+                    <select  id="select_host_duibi" onchange="change_host('{{ select_db_duibi|default:0 }}','duibi')" class="form-control col-md-12" name = "ins_set_duibi">
+                        <option value ="" selected disabled >----Select Host----</option>
+                    </select>
+
+                    <select onchange="Change('duibi')" id="id_db_duibi" class="form-control col-md-1" title="选择比对库" name = "db_duibi">
+                        <option value ="">-----Select DB-----</option>
+                        {% for obj in objlist %}
+                            {% if obj == choosed_host1 %}
+                                <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
+                            {% else %}
+                                <option value ="{{ obj }}">{{ obj }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                        <select id="id_tb_duibi" class="form-control col-md-1" title="选择比对表"  name = "tb_duibi">
                             {% if choosed_tb1 %}
-                                <option selected="selected" value ="{{ choosed_tb1 }}">{{ choosed_tb1 }}</option>
+                                <option selected="selected" value ="{{ choosed_tb_duibi }}">{{ choosed_tb_duibi }}</option>
 
                             {% else %}
-                                <option selected="selected" value ="">----------</option>
+                                <option selected="selected" value ="">-----Select TB-----</option>
                             {% endif %}
                         </select>
 
                     </div>
-                    <div class="col-md-3">
-                        <select onchange="Change2()" id="dbid2" class="form-control col-md-1" title="选择参照库" name = "choosedb2">
-                            <option value ="">----------</option>
+                    <div class="col-md-6">
+
+                     <select id="id_select_group_canzhao" onchange="change_group(-1,{{ select_group_canzhao|default:0 }},'{{ select_host_canzhao|default:0 }}','canzhao')" class="form-control col-md-12"  name = "select_group_canzhao">
+                                <option value ="" selected disabled >----Select Host Group----</option>
+                                    {% for group in host_group %}
+                                        {% if group.id == select_group_canzhao %}
+                                            <option selected="selected" value ="{{ group.id }}">{{ group.name }}</option>
+                                        {% else %}
+                                            <option value ="{{ group.id }}">{{ group.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                            </select>
+
+                            <select  id="select_host_canzhao" onchange="change_host('{{ select_db_canzhao|default:0 }}','canzhao')" class="form-control col-md-12" name = "ins_set_canzhao">
+                                <option value ="" selected disabled >----Select Host----</option>
+                            </select>
+
+                        <select onchange="Change('canzhao')" id="id_db_canzhao" class="form-control col-md-1" title="选择参照库" name = "db_canzhao">
+                            <option value ="">----Select DB----</option>
                             {% for obj in objlist %}
                                 {% if obj == choosed_host2 %}
                                     <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
@@ -56,14 +85,13 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select id="tbid2" class="form-control col-md-1"  title="选择参照表" name = "choosetb2">
+
+                        <select id="id_tb_canzhao" class="form-control col-md-1"  title="选择参照表" name = "tb_canzhao">
                             {% if choosed_tb2 %}
                                 <option selected="selected" value ="{{ choosed_tb2 }}">{{ choosed_tb2 }}</option>
 
                             {% else %}
-                                <option selected="selected" value ="">----------</option>
+                                <option selected="selected" value ="">----Select TB----</option>
                             {% endif %}
                         </select>
                     </div>
@@ -119,29 +147,112 @@
     {% include "include/pagejump/pagejump.html" %}
     {#    {% include "include/pagejump/tabledata.html" %}#}
     <script>
-        function Change1() {
-            var dbtag=$("#dbid1").val();
-            $("#tbid1").empty("");
-            $.get("{% url 'get_tblist' %}",{'dbtag':dbtag}).done(function (data) {
+        function Change(dc) {
+            var select_host = $("#select_host_"+dc);
+            var select_db = $("#id_db_"+dc).val();
+
+            var instance_id = select_host.val();
+{#            alert(instance_id)#}
+            $("#id_tb_"+dc).empty("");
+            $("#id_tb_"+dc).append('<option  id="select_host" value ="" selected disabled >----Select TB----</option>');
+            $.get("{% url 'get_tblist' %}",{'instance_id':instance_id,'select_db':select_db}).done(function (data) {
                 for (var i =0 ; i <= data.length - 1; i++) {
-                    $("#tbid1").append("<option value='" + data[i]  + "'>" + data[i] + "</option>");
+                    $("#id_tb_"+dc).append("<option value='" + data[i]  + "'>" + data[i] + "</option>");
 
                 };
             });
         }
-        function Change2() {
-            var dbtag=$("#dbid2").val();
-            $("#tbid2").empty("");
-            $.get("{% url 'get_tblist' %}",{'dbtag':dbtag}).done(function (data) {
-                for (var i =0 ; i <= data.length - 1; i++) {
-                    $("#tbid2").append("<option value='" + data[i]  + "'>" + data[i] + "</option>");
 
-                };
-            });
-        }
 
 
     </script>
+
+   <script>
+
+function change_host(select_db_name,dc) {
+{#    alert(1)#}
+    var select_host = $("#select_host_"+dc);
+    var instance_id = select_host.val();
+
+    if (instance_id === null){
+        instance_id = "{{ select_host }}"
+    }
+{#    if (flag === -1){instance_id = select_host}#}
+    var db_selector = $('#id_db_'+dc);
+    $(db_selector).empty()
+    $(db_selector).append('<option  id="select_host" value ="" selected disabled >----Select DB----</option>');
+    $.getJSON('/dbmanage/diff/', {'instance_id': instance_id}, function (ret) {
+
+        $.each(ret, function(key,value){
+            var id = value.db_account_id+'_'+value.db_account_role+'***'+value.db_name;
+            console.log(value)
+            if (id === select_db_name){$(db_selector).append('<option selected  value ="'+id+'" >'+value.db_name+'</option>')}
+            else{$(db_selector).append('<option  value ="'+id+'" >'+value.db_name+'</option>')}
+
+        });
+
+
+
+    })
+}
+
+
+function change_group(flag,selected_group,selected_host,dc) {
+
+    var host_group = selected_group;
+    if (flag == -1) {
+        host_group = $("#id_select_group_"+dc+" option:selected").val();
+    }
+{#    console.log(selected_group,selected_host)#}
+    var select_host = $("#select_host_"+dc);
+    var select_db = $("#id_db_"+dc);
+    var select_tb = $("#id_tb_"+dc);
+    $(select_db).empty();
+    $(select_tb).empty();
+    $(select_host).empty();
+    $(select_tb).append('<option  id="select_host" value ="" selected disabled >----Select TB----</option>');
+    $(select_db).append('<option  id="select_host" value ="" selected disabled >----Select DB----</option>');
+    $(select_host).append('<option  id="select_host" value ="" selected disabled >----Select Host----</option>');
+
+
+    $.ajax({
+        url: '/dbmanage/log_query/',
+        data: {'host_group': host_group},
+        success: function (ret) {
+            $.each(ret ,function(key,value){
+
+                var id = value.id;
+                var text = value.ip+":"+value.port+' '+value.explain;
+                if (id === selected_host){$(select_host).append('<option selected  value ="'+id+'" >'+text+'</option>')}
+                else{$(select_host).append('<option  value ="'+id+'" >'+text+'</option>')}
+            })
+        }
+    })
+}
+
+
+    </script>
+<script>
+ var select_host_duibi = sessionStorage.getItem("select_host_duibi");
+ var select_host_canzhao = sessionStorage.getItem("select_host_canzhao");
+ var db_duibi = sessionStorage.getItem("id_db_duibi");
+ var tb_duibi = sessionStorage.getItem("id_tb_duibi");
+ var db_canzhao = sessionStorage.getItem("id_db_canzhao");
+ var tb_canzhao = sessionStorage.getItem("id_tb_canzhao");
+
+console.log(select_host_duibi)
+
+
+</script>
+
+    <script>
+
+    change_group(-2,{{ select_group_duibi|default:0 }},{{ select_host_duibi }},'duibi');
+    change_group(-2,{{ select_group_canzhao|default:0 }},{{ select_host_duibi }},'canzhao');
+    change_host(-1,{{ select_host_canzhao|default:0 }},'{{ select_db_canzhao|default:0 }}','canzhao')
+    change_host(-1,{{ select_host_canzhao|default:0 }},'{{ select_db_canzhao|default:0 }}','duibi')
+    </script>
+
 
 {#        <script>#}
 {##}
@@ -167,5 +278,5 @@
 {#            }#}
 {#        </script>#}
 
-{% endblock %}
+    {% endblock %}
 {% endblock %}

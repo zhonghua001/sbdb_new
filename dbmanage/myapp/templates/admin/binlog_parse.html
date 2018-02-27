@@ -44,8 +44,9 @@
                                  <div class="form-group">
                                   <label for="id_binary_list" style="margin-top: 10px">BINLOG:</label>
                                     <select id="id_binary_list" class="form-control col-md-3" name = "binary_list">
+                                    var fd = 
                                         {% for obj in binlist %}
-                                            {% if obj == binname %}
+                                            {% if  binname in obj %}
                                                 <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
                                             {% else %}
                                                 <option value ="{{ obj }}" >{{ obj }}</option>

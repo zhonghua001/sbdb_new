@@ -2392,31 +2392,70 @@ def pass_reset(request):
 # @permission_required('myapp.can_see_metadata', login_url='/')
 @permission_verify()
 def get_tblist(request):
-    choosed_host = request.GET['dbtag'].split(';')[0]
-    if len(choosed_host) >0 and choosed_host in func.get_mysql_hostlist(request.user.username, 'meta'):
-        tblist = map(lambda x:x[0],meta.get_metadata(choosed_host, 6))
-    else :
-        tblist = ['wrong dbname',]
-    return HttpResponse(json.dumps(tblist), content_type='application/json')
+    # choosed_host = request.GET['dbtag'].split(';')[0]
+    try:
+        instance_id = request.GET['instance_id']
+        db_account_id = request.GET['select_db'].split('_')[0]
+        db_name = request.GET['select_db'].split('***')[1]
+
+        if int(instance_id) > 0 and int(db_account_id) > 0:
+            db_account = Db_account.objects.get(id=int(db_account_id))
+            tblist = map(lambda x:x[0],meta.get_metadata(db_name,db_account, 6))
+
+        else :
+            tblist = ['wrong dbname',]
+        return HttpResponse(json.dumps(tblist), content_type='application/json')
+    except Exception,e:
+        tblist = ['wrong dbname', ]
+        return HttpResponse(json.dumps(tblist), content_type='application/json')
 
 @login_required(login_url='/accounts/login/')
 # @permission_required('myapp.can_see_metadata', login_url='/')
 @permission_verify()
 def diff(request):
     temp_name = 'dbmanage/dbmanage_header.html'
-    objlist = func.get_mysql_hostlist(request.user.username, 'meta')
+
+    host_group = HostGroup.objects.filter(name__istartswith='db')
+    select_group_canzhao = request.POST.get('select_group_canzhao') \
+        if request.POST.get('select_group_canzhao') is not None else 0
+    select_group_duibi = request.POST.get('select_group_duibi') \
+        if request.POST.get('select_group_duibi') is not None else 0
+    select_host_duibi = request.POST.get('ins_set_duibi') \
+        if request.POST.get('ins_set_duibi') is not None else 0
+    select_host_canzhao = request.POST.get('ins_set_canzhao') \
+        if request.POST.get('ins_set_canzhao') is not None else 0
+    select_group_canzhao = int(select_group_canzhao)
+    select_host_duibi = int(select_host_duibi)
+    select_group_duibi = int(select_group_canzhao)
+    select_host_canzhao = int(select_host_duibi)
+    # objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')
     # print result
     if request.method == 'POST':
         if  request.POST.has_key('check'):
-            choosed_host1 = request.POST['choosedb1'].split(';')[0]
-            choosed_host2 = request.POST['choosedb2'].split(';')[0]
-            choosed_tb1 = request.POST['choosetb1'].split(';')[0]
-            choosed_tb2 = request.POST['choosetb2'].split(';')[0]
-            if choosed_host1 in objlist and choosed_host2 in objlist:
-                result = func.get_diff(choosed_host1, choosed_tb1, choosed_host2, choosed_tb2)
-                (sh_cre1, sh_cre_col, dbname) = meta.get_metadata(choosed_host1, 5, choosed_tb1)
-                (sh_cre2, sh_cre_col, dbname) = meta.get_metadata(choosed_host2, 5, choosed_tb2)
+            try:
+                db_account_id_duibi = request.POST['db_duibi'].split('_')[0]
+                db_name_duibi = request.POST['db_duibi'].split('***')[1]
+                tb_name_duibi = request.POST['tb_duibi']
+                tb_name_canzhao = request.POST['tb_canzhao']
+                db_account_id_canzhao = request.POST['db_canzhao'].split('_')[0]
+                db_name_canzhao = request.POST['db_canzhao'].split('***')[1]
+                db_account_duibi = Db_account.objects.get(id=int(db_account_id_duibi))
+                db_account_canzhao = Db_account.objects.get(id=int(db_account_id_canzhao))
+                result = func.get_diff(db_account_duibi,db_name_duibi,tb_name_duibi,
+                                       db_account_canzhao,db_name_canzhao,tb_name_canzhao
+                                       )
+                (sh_cre1, sh_cre_col, dbname) = meta.get_metadata(db_name_duibi,db_account_duibi, 5, tb_name_duibi)
+                (sh_cre2, sh_cre_col, dbname) = meta.get_metadata(db_name_canzhao,db_account_canzhao, 5, tb_name_canzhao)
+            except Exception,e:
+                info = e
+                return render(request, 'diff.html', locals())
+
+    elif request.GET.has_key('host_group'):
+        db_list = func.get_hostlist(request, tag='query')
+        return JsonResponse(db_list, safe=False)
+    elif request.GET.has_key('instance_id'):
+        return HttpResponse(json.dumps(func.get_hostlist(request, tag='query')))
     return render(request,'diff.html', locals())
 
 

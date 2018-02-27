@@ -19,7 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 });
 </script>
 </head>
-<body class="hold-transition  sidebar-mini skin-purple">
+<body id='id_body' class="hold-transition  sidebar-mini skin-purple">
 <div class="loading"></div>
 <div class="wrapper">
 
@@ -75,7 +75,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         sessionStorage.setItem('sidebar_collapse',0)
     }
     else {sessionStorage.setItem('sidebar_collapse',1)}
-    })
+    });
 
 $(document).ready(function(){ dropdownOpen()}); //调用 }); /** * 鼠标划过就展开子菜单，免得需要点击才能展开 */
     function dropdownOpen() {
