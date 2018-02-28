@@ -64,7 +64,7 @@ def process_runtask(task_id):
     sendmail_task.delay(task_id)
 
 @shared_task()
-def parse_binlog(serverid,binname,begintime,tbname,dbselected,username,countnum,flash_back):
+def parse_binlog(serverid,binname_start,begintime,tbname,dbselected,username,countnum,flash_back,binname_end='',endtime=''):
     flag = True
     pc = prpcrypt()
     insname = Db_instance.objects.get(id=serverid)
@@ -74,19 +74,20 @@ def parse_binlog(serverid,binname,begintime,tbname,dbselected,username,countnum,
         tar_passwd = pc.decrypt(db_account[0].passwd)
 
         connectionSettings = {'host': insname.ip, 'port': int(insname.port), 'user': tar_username, 'passwd': tar_passwd}
-        binlogsql = binlog2sql.Binlog2sql(connectionSettings=connectionSettings, startFile=binname,
-                                          startPos=4, endFile='', endPos=0,
-                                          startTime=begintime, stopTime='', only_schemas=dbselected,
-                                          only_tables=tbname, nopk=False, flashback=flash_back, stopnever=False,countnum=countnum)
+        binlogsql = binlog2sql.Binlog2sql(connectionSettings=connectionSettings, startFile=binname_start,
+                                          startPos=4, endFile=binname_end, endPos=0,
+                                          startTime=begintime, stopTime=endtime, only_schemas=None if dbselected == '0' else dbselected,
+                                          only_tables=None if tbname == '0' else tbname, nopk=False, flashback=flash_back, stopnever=False,countnum=countnum)
         binlogsql.process_binlog()
         sqllist = binlogsql.sqllist
-        sendmail_sqlparse.delay(username, dbselected, tbname, sqllist,flash_back)
+        # sendmail_sqlparse.delay(username, dbselected, tbname, sqllist,flash_back)
+        sendmail_sqlparse(username, '{}:{}__{}'.format(insname.ip,insname.port,'ALL' if  dbselected == '0' else dbselected), tbname, sqllist, flash_back)
         return sqllist
     else:
         return ['Instance do not have admin role db account!']
 
 
-def parse_binlogfirst(insname,binname,countnum):
+def parse_binlogfirst(insname,binname_start,binname_end,countnum):
     flag = True
     pc = prpcrypt()
     db_account = Db_account.objects.filter(instance=insname,db_account_role='admin')
@@ -94,8 +95,8 @@ def parse_binlogfirst(insname,binname,countnum):
         tar_username = db_account[0].user
         tar_passwd = pc.decrypt(db_account[0].passwd)
         connectionSettings = {'host': insname.ip, 'port': int(insname.port), 'user': tar_username, 'passwd': tar_passwd}
-        binlogsql = binlog2sql.Binlog2sql(connectionSettings=connectionSettings, startFile=binname,
-                                          startPos=4, endFile='', endPos=0,
+        binlogsql = binlog2sql.Binlog2sql(connectionSettings=connectionSettings, startFile=binname_start,
+                                          startPos=4, endFile=binname_end, endPos=0,
                                           startTime='', stopTime='', only_schemas='',
                                           only_tables='', nopk=False, flashback=False, stopnever=False,countnum=countnum)
         binlogsql.process_binlog()
@@ -111,9 +112,9 @@ def parse_binlogfirst(insname,binname,countnum):
 def sendmail_sqlparse(user,db,tb,sqllist,flashback):
     mailto=[]
     if flashback==True:
-        title = "BINLOG PARSE (UNDO) FOR "+ db + "." + tb
+        title = "BINLOG PARSE (UNDO) FOR "+ db + "." + ('ALL' if tb == '0' else tb)
     else:
-        title = "BINLOG PARSE (REDO) FOR " + db + "." + tb
+        title = db
     mailto.append(UserInfo.objects.get(username=user).email)
     html_content = loader.render_to_string('include/mail_template.html', locals())
     sendmail(title, mailto, html_content)

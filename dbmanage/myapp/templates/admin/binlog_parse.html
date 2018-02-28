@@ -14,18 +14,15 @@
         <form role="form" method='post'>
             {% csrf_token %}
 {#            {% include "include/sidebar.html" %}#}
-        <div class="col-md-12 no-padding">
+
+      <div class="col-md-2 no-padding" >
            <div class="box box-primary col-md-12 no-padding">
-                <div class="box-header with-border">
-                  <h4 class="box-title">Binlog Parser</h4>
-                </div>
-            <!-- /.box-header -->
-            <!-- form start -->
+           <div class="box-header with-border">
+                  <h4 class="box-title">Binlog Parser First</h4>
+           </div>
+              <div class="box-body">
 
-              <div class="box-body ">
-
-                        <div class="row">
-                            <div class="col-md-3 ">
+                            <div class="col-md-12 no-padding ">
                              <div class="form-group">
                               <label for="id_select_group" style="margin-top: 10px">Group:</label>
                                  <select id="id_select_group" onchange="change_group(-1,{{ select_group|default:0 }},'{{ select_host|default:0 }}')" class="form-control col-md-12"  name = "select_group">
@@ -40,13 +37,62 @@
                                 </select>
                              </div>
                         </div>
+
+
+                     <div class="col-md-12 no-padding" style="margin-top: 10px">
+                              <div class="form-group">
+                                <label for="select_host" >Instance:</label>
+                                 <select  id="select_host" class="form-control col-md-12" name = "ins_set">
+                                    <option value ="" selected disabled >---Select Host ---</option>
+                                </select>
+                              </div>
+                            </div>
+
+
+                     <div class="col-md-12 no-padding text-center" style="margin-top: 10px">
+
+                              <button name="show_binary" class="btn btn-primary" style="width: 100%" value="1">show binary logs and DB</button >
+                              <button name="show_binary_datetime" class="btn btn-danger" style="margin-top: 10px;width: 100%" value="1">Analyze binlog datetime</button >
+
+                     </div>
+                    </div>
+              </div>
+                </div>
+
+        <div class="col-md-10 " >
+           <div class="box box-primary col-md-12 no-padding">
+                <div class="box-header with-border">
+                  <h4 class="box-title">Binlog Parser Second</h4>
+                </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+
+              <div class="box-body ">
+
+                        <div class="row">
+
                             <div class="col-md-3  ">
                                  <div class="form-group">
-                                  <label for="id_binary_list" style="margin-top: 10px">BINLOG:</label>
-                                    <select id="id_binary_list" class="form-control col-md-3" name = "binary_list">
-                                    var fd = 
+                                  <label for="id_binary_start" style="margin-top: 10px">Start Binlog:</label>
+                                    <select id="id_binary_start" class="form-control col-md-3" name = "binary_list_start">
+                                    <option selected="selected" disabled >----Select start of binlog</option>
                                         {% for obj in binlist %}
-                                            {% if  binname in obj %}
+                                            {% if  binname_start in obj %}
+                                                <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value ="{{ obj }}" >{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                          <div class="col-md-3  ">
+                                 <div class="form-group">
+                                  <label for="id_binary_end" style="margin-top: 10px">End Binlog:</label>
+                                    <select id="id_binary_end" class="form-control col-md-3" name = "binary_list_end">
+                                    <option selected="selected" disabled >----Select end of binlog</option>
+                                        {% for obj in binlist %}
+                                            {% if  binname_end in obj %}
                                                 <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
                                             {% else %}
                                                 <option value ="{{ obj }}" >{{ obj }}</option>
@@ -58,7 +104,8 @@
                             <div class="col-md-3  ">
                                 <div class="form-group">
                                  <label for="id_dblist" style="margin-top: 10px">DB:</label>
-                                 <select  id="id_dblist" class="form-control col-md-3" name = "dblist">
+                                 <select  id="id_dblist" onchange="Change()" class="form-control col-md-3" name = "dblist">
+                                 <option selected value="0" >----ALL----</option>
                                     {% for obj in dblist %}
                                         {% if obj == dbselected %}
                                             <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
@@ -71,25 +118,23 @@
                             </div>
                             <div class="col-md-3  ">
                                  <div class="form-group">
-                                     <label for="id_dblist" style="margin-top: 10px">TABLE:</label>
-                                        {% if tbname %}
-                                            <input id="id_tbname" type="text" placeholder="tablename" class="form-control" maxlength="30" value="{{ tbname }}" name="tbname">
+                                     <label for="id_tblist" style="margin-top: 10px">TABLE:</label>
+                                       <select  id="id_tblist" class="form-control col-md-3" name = "tblist">
+                                       <option selected value="0" >----ALL----</option>
+                                        {% for obj in tblist %}
+                                            {% if obj == dbselected %}
+                                            <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
                                         {% else %}
-                                            <input id="id_tbname" type="text" placeholder="tablename" class="form-control" maxlength="30"  name="tbname">
+                                            <option value ="{{ obj }}" >{{ obj }}</option>
                                         {% endif %}
+                                    {% endfor %}
+                                </select>
                                 </div>
                             </div>
 
                         </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                              <div class="form-group">
-                                <label for="select_host" >Instance:</label>
-                                 <select  id="select_host" class="form-control col-md-12" name = "ins_set">
-                                    <option value ="" selected disabled >---Select Host ---</option>
-                                </select>
-                              </div>
-                            </div>
+                        <div class="row" style="margin-top: 19px">
+
                             <div class="col-md-3">
                               <div class="form-group">
                                 <label for="id_begin_time" >BEGIN_TIME:</label>
@@ -138,11 +183,26 @@
                             </div>
 
 
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3 " >
-                              <button name="show_binary" class="btn btn-primary" value="1">show binary logs and DB</button >
+                         <div class="col-md-3">
+                                  <div class="form-group">
+                             <label for="id_stopnever" >StopNever:</label>
+                                    <select id="id_stopnever" class="form-control col-md-3" name = "stopnever">
+                                        {% if stopnever == 'True' %}
+                                            <option selected="selected" value ='true' >True</option>
+                                            <option value ='false' >False</option>
+                                        {% else %}
+                                            <option selected="selected" value ='false' >False</option>
+                                            <option value ='true' >True</option>
+                                        {% endif %}
+
+                                    </select>
+                         </div>
                             </div>
+
+
+                        </div>
+                        <div class="row" style="margin-top: 20px">
+
                             <div class="col-md-3 " >
                                <button title="只看binlog选择项，其它选项无视" name="parse_first" style="margin-top: 5px" class="btn btn-default col-md-12" value="1">查看解析前5条</button >
                             </div>
@@ -166,7 +226,7 @@
             {% endif %}
         </div>
 
-        <div class="col-md-12" style="overflow: auto">
+        <div class="col-md-12" style="overflow: auto;max-height: 500px">
 
 
         <table  class="table table-condensed" border="1">
@@ -262,6 +322,44 @@ function change_group(flag,selected_group,selected_host) {
             minDate:"2014-09-19 00:00:00",
             okfun:function(val){alert(val)}
         })
+    </script>
+    <script>
+      function Change() {
+            var instance_id = $("#select_host").val();
+            var select_db = $("#id_dblist").val();
+{#            alert(instance_id)#}
+            $("#id_tblist").empty();
+            $("#id_tblist").append('<option  value ="0" selected >----ALL----</option>');
+            $.get("{% url 'get_tblist' %}",{'instance_id':instance_id,'select_db':select_db}).done(function (data) {
+                for (var i =0 ; i <= data.length - 1; i++) {
+                    $("#id_tblist").append("<option value='" + data[i]  + "'>" + data[i] + "</option>");
+
+                };
+            });
+        }
+
+
+        $("#id_binary_start").change(function () {
+            var Sindex = $(this).get(0).selectedIndex;
+            $("#id_binary_end option").each(function (i,data) {  //遍历所有option
+                $(this).removeAttr('selected');
+                if (i <= Sindex) {
+{#                    console.log($(this).val());#}
+                    $(this).attr('disabled', 'true');
+
+                }
+                    else{
+                     $(this).removeAttr('disabled');
+                    if (i === Sindex+1){
+                       $(this).attr('selected','true')
+                    }
+
+                    }
+            })
+        })
+        ;
+
+
     </script>
 
     {#        <script>#}

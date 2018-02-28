@@ -2337,30 +2337,39 @@ def mysql_binlog_parse(request):
             if request.POST.has_key('show_binary'):
                 return render(request, 'admin/binlog_parse.html', locals())
             elif request.POST.has_key('parse'):
-                binname = request.POST['binary_list'].split(' ')[0]
+                binname_start = request.POST['binary_list_start'].split(' ')[0]
+                binname_end = request.POST['binary_list_end'].split(' ')[0]
                 countnum = int(request.POST['countnum'])
                 if countnum not in [10,50,200]:
                     countnum = 10
                 # print countnum
                 begintime = request.POST['begin_time']
-                tbname = request.POST['tbname']
-                dbselected = request.POST['dblist']
+                endtime = request.POST['end_time']
+                tbname = request.POST.get('tblist')
+                dbselected = request.POST.get('dblist')
+
                 # parse_binlog.delay(serverid, binname, begintime, tbname, dbselected, request.user.username, countnum,False)
-                parse_binlog(serverid, binname, begintime, tbname, dbselected,request.user.username,countnum,False)
+                parse_binlog(serverid, binname_start,  begintime,  tbname, dbselected,
+                             request.user.username,countnum,False,binname_end,endtime
+                             )
                 info = "Binlog REDO Parse mission uploaded"
             elif request.POST.has_key('parse_first'):
-                binname = request.POST['binary_list'].split(' ')[0]
-                sqllist = parse_binlogfirst(insname, binname, 5)
+                binname_start = request.POST['binary_list_start'].split(' ')[0]
+                binname_end = request.POST['binary_list_end'].split(' ')[0]
+                sqllist = parse_binlogfirst(insname, binname_start,binname_end, 5)
             elif request.POST.has_key('parse_undo'):
-                binname = request.POST['binary_list'].split(' ')[0]
+                binname_start = request.POST['binary_list_start'].split(' ')[0]
+                binname_end = request.POST['binary_list_end'].split(' ')[0]
                 countnum = int(request.POST['countnum'])
                 if countnum not in [10, 50, 200]:
                     countnum = 10
                 begintime = request.POST['begin_time']
-                tbname = request.POST['tbname']
+                endtime = request.POST['end_time']
+                tbname = request.POST.get('tblist')
                 dbselected = request.POST['dblist']
-                # parse_binlog.delay(insname, binname, begintime, tbname, dbselected, request.user.username, countnum,True)
-                parse_binlog(insname, binname, begintime, tbname, dbselected, request.user.username, countnum,True)
+                parse_binlog(serverid, binname_start, begintime, tbname, dbselected, request.user.username, countnum,
+                                   True,binname_end,endtime)
+                # parse_binlog(insname, binname, begintime, tbname, dbselected, request.user.username, countnum,True)
                 info = "Binlog UNDO Parse mission uploaded"
         except Exception,e:
             pass
@@ -2395,9 +2404,12 @@ def get_tblist(request):
     # choosed_host = request.GET['dbtag'].split(';')[0]
     try:
         instance_id = request.GET['instance_id']
-        db_account_id = request.GET['select_db'].split('_')[0]
-        db_name = request.GET['select_db'].split('***')[1]
-
+        try:
+            db_account_id = request.GET['select_db'].split('_')[0]
+            db_name = request.GET['select_db'].split('***')[1]
+        except:
+            db_account_id = Db_account.objects.get(db_account_role='admin',instance_id=int(instance_id)).id
+            db_name = request.GET['select_db']
         if int(instance_id) > 0 and int(db_account_id) > 0:
             db_account = Db_account.objects.get(id=int(db_account_id))
             tblist = map(lambda x:x[0],meta.get_metadata(db_name,db_account, 6))

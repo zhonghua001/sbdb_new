@@ -71,12 +71,17 @@ class Binlog2sql(object):
         eStartPos, lastPos = stream.log_pos, stream.log_pos
         try:
             count=0
+
             for binlogevent in stream:
-                # print datetime.datetime.fromtimestamp(binlogevent.timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                print stream.log_file
+                print datetime.datetime.fromtimestamp(binlogevent.timestamp).strftime('%Y-%m-%d %H:%M:%S')
+
                 if count>=self.countnum:
                     break
                 if not self.stopnever:
-                    if (stream.log_file == self.endFile and stream.log_pos == self.endPos) or (stream.log_file == self.eofFile and stream.log_pos == self.eofPos):
+                    # if (stream.log_file == self.endFile and stream.log_pos == self.endPos) or (stream.log_file == self.eofFile and stream.log_pos == self.eofPos):
+                    if (stream.log_file == self.endFile ) or (
+                                stream.log_file == self.eofFile and stream.log_pos == self.eofPos):
                         flagLastEvent = True
 
                     elif datetime.datetime.fromtimestamp(binlogevent.timestamp) < self.startTime:
@@ -329,9 +334,10 @@ if __name__ == '__main__':
     connectionSettings = {'host':host, 'port':port, 'user':user, 'passwd':password}
     binlog2sql = Binlog2sql(connectionSettings=connectionSettings, startFile=startFile,
                             startPos=startPos, endFile='', endPos=0,
-                            startTime='2018-02-28 15:00:21', stopTime='2018-02-27 12:00:32', only_schemas='',
-                            only_tables='', nopk=False, flashback=False, stopnever=False,countnum=20)
+                            startTime='2018-02-10 15:00:21', stopTime='2018-02-27 12:00:32', only_schemas='',
+                            only_tables='', nopk=False, flashback=False, stopnever=False,countnum=5)
 
     binlog2sql.process_binlog()
-    print binlog2sql.sqllist
+    for i in  binlog2sql.sqllist:
+        print i
 
