@@ -1,6 +1,5 @@
-def inc(x):
-    return x + 1
+def inc(x,f,e,y=1):
+    print x,y,e,f
 
+inc(32,2,3,4)
 
-def test_answer():
-    assert inc(3) == 4

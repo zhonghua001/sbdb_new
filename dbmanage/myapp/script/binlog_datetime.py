@@ -197,6 +197,8 @@ def get_info(mysql_binlog) :
 
     if not getattr(retval , 'end_time'    , None) :
         retval['end_time'] = event_header.timestamp
+    if not getattr(retval, 'end_pos', None):
+        retval['end_pos'] = event_header.next_position
     if not getattr(retval , 'next_binlog' , None) :
         idx =  mysql_binlog.rindex('.')
         _id =  int(mysql_binlog[idx+1:] ) + 1
@@ -204,14 +206,17 @@ def get_info(mysql_binlog) :
     return retval
 
 if __name__ == '__main__' :
-    # if len(sys.argv) == 2 :
-    #     mysql_binlog = sys.argv[1]
+    if len(sys.argv) == 2 :
+        mysql_binlog = sys.argv[1]
+        info = get_info(mysql_binlog)
+        print info
+
     # else :
     #     print 'Usage : \n./readbinlog.py <mysql-bin-log>'
     #     exit()
 
     print time.time()
-    info = get_info('/var/log/mysql/binlog/mysql-bin.000073')
+    info = get_info('/var/log/mysql/binlog/mysql-bin.000211')
     for (k ,v) in info.items() :
         print '%s = %s' % (k , v)
     print time.time()

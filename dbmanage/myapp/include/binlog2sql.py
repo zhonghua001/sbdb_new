@@ -80,7 +80,7 @@ class Binlog2sql(object):
                     break
                 if not self.stopnever:
                     # if (stream.log_file == self.endFile and stream.log_pos == self.endPos) or (stream.log_file == self.eofFile and stream.log_pos == self.eofPos):
-                    if (stream.log_file == self.endFile ) or (
+                    if (stream.log_file == self.endFile and stream.log_file <> self.startFile) or (
                                 stream.log_file == self.eofFile and stream.log_pos == self.eofPos):
                         flagLastEvent = True
 

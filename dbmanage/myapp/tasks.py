@@ -81,7 +81,8 @@ def parse_binlog(serverid,binname_start,begintime,tbname,dbselected,username,cou
         binlogsql.process_binlog()
         sqllist = binlogsql.sqllist
         # sendmail_sqlparse.delay(username, dbselected, tbname, sqllist,flash_back)
-        sendmail_sqlparse(username, '{}:{}__{}'.format(insname.ip,insname.port,'ALL' if  dbselected == '0' else dbselected), tbname, sqllist, flash_back)
+        sendmail_sqlparse.delay(username, '{}:{}__{}'.format(insname.ip,insname.port,'ALL' if  dbselected == '0' else dbselected), tbname, sqllist, flash_back)
+        print sqllist
         return sqllist
     else:
         return ['Instance do not have admin role db account!']
@@ -96,7 +97,7 @@ def parse_binlogfirst(insname,binname_start,binname_end,countnum):
         tar_passwd = pc.decrypt(db_account[0].passwd)
         connectionSettings = {'host': insname.ip, 'port': int(insname.port), 'user': tar_username, 'passwd': tar_passwd}
         binlogsql = binlog2sql.Binlog2sql(connectionSettings=connectionSettings, startFile=binname_start,
-                                          startPos=4, endFile=binname_end, endPos=0,
+                                          startPos=4, endFile=binname_end if binname_end <> '0' else None , endPos=0,
                                           startTime='', stopTime='', only_schemas='',
                                           only_tables='', nopk=False, flashback=False, stopnever=False,countnum=countnum)
         binlogsql.process_binlog()

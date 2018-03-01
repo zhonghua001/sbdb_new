@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import csv
+import csv,os
 import datetime
 import json
 from django.utils import timezone
@@ -23,10 +23,10 @@ from dbmanage.blacklist import blFunction as bc
 from form import AddForm, LoginForm, Logquery, Uploadform, Taskquery, Taskscheduler,AddDBAccount,AddDBAccountSetDB
 from dbmanage.myapp.include import function as func, inception as incept, chart, pri, meta, sqlfilter
 from dbmanage.myapp.include.scheduled import get_dupreport
-from dbmanage.myapp.models import Db_group, Db_name, Db_account, Db_instance, Task,Db_database_permission,Db_database_permission_detail,Instance_account_admin
+from dbmanage.myapp.models import Db_group, Db_name, Db_account, Db_instance, Task,Db_database_permission,Db_database_permission_detail,Instance_account_admin,Binlog_datetime
 from dbmanage.myapp.tasks import task_run, sendmail_task, parse_binlog, parse_binlogfirst,d
 from include.encrypt import prpcrypt
-from include.function import mysql_query as func_mysql_query
+from include.function import mysql_query as func_mysql_query, remote_scp
 from django_celery_beat.models import CrontabSchedule,PeriodicTask,IntervalSchedule
 from dbmanage.myapp.tasks import process_runtask
 
@@ -2323,6 +2323,10 @@ def mysql_binlog_parse(request):
             dblist = []
             serverid = int(request.POST['ins_set'])
             insname = Db_instance.objects.get(id=serverid)
+            if request.POST.has_key('t'):
+                t = request.POST['t']
+            if request.POST.has_key('be'):
+                be = request.POST['be']
             datalist, col_binary = meta.get_process_data(insname, 'show binary logs')
             dbresult, col_database = meta.get_process_data(insname, 'show databases')
             if col_binary != ['error'] and col_database != ['error']:
@@ -2338,7 +2342,8 @@ def mysql_binlog_parse(request):
                 return render(request, 'admin/binlog_parse.html', locals())
             elif request.POST.has_key('parse'):
                 binname_start = request.POST['binary_list_start'].split(' ')[0]
-                binname_end = request.POST['binary_list_end'].split(' ')[0]
+                binname_end = None if request.POST['binary_list_end'].split(' ')[0] == '0' \
+                    else request.POST['binary_list_end'].split(' ')[0]
                 countnum = int(request.POST['countnum'])
                 if countnum not in [10,50,200]:
                     countnum = 10
@@ -2349,17 +2354,23 @@ def mysql_binlog_parse(request):
                 dbselected = request.POST.get('dblist')
 
                 # parse_binlog.delay(serverid, binname, begintime, tbname, dbselected, request.user.username, countnum,False)
-                parse_binlog(serverid, binname_start,  begintime,  tbname, dbselected,
+                parse_binlog.delay(serverid, binname_start,  begintime,  tbname, dbselected,
                              request.user.username,countnum,False,binname_end,endtime
                              )
                 info = "Binlog REDO Parse mission uploaded"
             elif request.POST.has_key('parse_first'):
                 binname_start = request.POST['binary_list_start'].split(' ')[0]
-                binname_end = request.POST['binary_list_end'].split(' ')[0]
+
+                if len(request.POST['binary_list_end'])>1:
+                    binname_end = request.POST['binary_list_end'].split(' ')[0]
+                else:
+                    binname_end = '0'
+
                 sqllist = parse_binlogfirst(insname, binname_start,binname_end, 5)
             elif request.POST.has_key('parse_undo'):
                 binname_start = request.POST['binary_list_start'].split(' ')[0]
-                binname_end = request.POST['binary_list_end'].split(' ')[0]
+                binname_end = None if request.POST['binary_list_end'].split(' ')[0] == 0 \
+                                    else request.POST['binary_list_end'].split(' ')[0]
                 countnum = int(request.POST['countnum'])
                 if countnum not in [10, 50, 200]:
                     countnum = 10
@@ -2367,11 +2378,43 @@ def mysql_binlog_parse(request):
                 endtime = request.POST['end_time']
                 tbname = request.POST.get('tblist')
                 dbselected = request.POST['dblist']
-                parse_binlog(serverid, binname_start, begintime, tbname, dbselected, request.user.username, countnum,
+                parse_binlog.delay(serverid, binname_start, begintime, tbname, dbselected, request.user.username, countnum,
                                    True,binname_end,endtime)
                 # parse_binlog(insname, binname, begintime, tbname, dbselected, request.user.username, countnum,True)
                 info = "Binlog UNDO Parse mission uploaded"
+            elif request.POST.has_key('show_binary_datetime'):
+
+                binlog_path, error = meta.get_process_data(insname, "show variables like 'log_bin_basename'")
+                if col_binary != ['error'] and error != ['error']:
+                    binlog_list = []
+                    for b in binlist:
+                        binlog_list.append('/'.join(binlog_path[0][1].split('/')[:-1])+'/'+b.split(' ')[0])
+
+                    local_path = os.path.dirname(__file__) + '/script/binlog_datetime.py'
+                    remote_path = '/tmp/binlog_datetime.py'
+                    r = remote_scp(insname.ip, 'put', local_path, remote_path)
+                    if r == 1:
+                        for binlog in binlog_list:
+                            stdin, stdout, stderr = remote_scp(insname.ip, 'command',
+                                                               command='python /tmp/binlog_datetime.py {}'.format(binlog)
+                                                               )
+                            if stderr.read() == '':
+                                stdout = stdout.read()
+                                cur_binlog = stdout.read()['next_binlog']
+                                start_time = stdout.read()['start_time']
+                                end_time = stdout.read()['end_time']
+                                start_pos = stdout.read()['start_pos']
+                                end_pos = stdout.read()['end_pos']
+                                binlog_save = Binlog_datetime.objects.create(binlog_file = cur_binlog,
+                                                                            start_pos = start_pos,
+                                                                            end_pos = end_pos,
+                                                                            start_date = start_time,
+                                                                            end_date = end_time
+                                                                )
+
+
         except Exception,e:
+            print e
             pass
         return render(request, 'admin/binlog_parse.html', locals())
     elif request.GET.has_key('host_group'):
@@ -2379,6 +2422,13 @@ def mysql_binlog_parse(request):
         return JsonResponse(db_list, safe=False)
     else:
         return render(request, 'admin/binlog_parse.html', locals())
+
+
+
+
+
+
+
 
 @login_required(login_url='/accounts/login/')
 def pass_reset(request):

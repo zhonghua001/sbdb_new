@@ -20,7 +20,7 @@ import json
 import time
 import base64
 import hmac
-
+import paramiko
 #
 # def get_item(data_dict,item):
 #     try:
@@ -819,6 +819,33 @@ def set_user_db(user,dblist):
             pass
 
 # a = Permission.objects.filter(codename__istartswith='can')
+def remote_scp(host_ip, type, remote_path='', local_path='', username='root', command = ''):
+    try:
+        pkey_file = '/home/dev/.ssh/id_rsa'  # 指定用来解密的私钥的路径，这个需要手动生成，下面会讲如何生成
+        key = paramiko.RSAKey.from_private_key_file(pkey_file)    #使用私钥解密
+
+        # s = paramiko.SSHClient()
+        # s.load_system_host_keys()
+        # s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        #
+        t = paramiko.Transport((host_ip,22))
+        t.connect(username=username, pkey=key)
+        sftp = paramiko.SFTPClient.from_transport(t)  # sftp传输协议
+        if type == 'put':
+            sftp.put(local_path,remote_path)
+        elif type == 'get':
+            sftp.get(remote_path,local_path)
+        elif type == 'command':
+            ssh = paramiko.SSHClient()
+            ssh._transport = t
+            stdin, stdout, stderr = ssh.exec_command(command)
+            # print stdout.read()
+            return stdin, stdout, stderr
+        t.close()
+        return 1
+    except Exception,e:
+        print e
+        return -1
 
 
 def set_usergroup(user,group):

@@ -233,3 +233,13 @@ class MySQL_monitor(models.Model):
         return self.tag
     class Meta:
         db_table = 'mysql_monitor'
+
+
+
+class Binlog_datetime(models.Model):
+    instance = models.ForeignKey(Db_instance)
+    binlog_file = models.CharField(max_length=50,null=False)
+    start_pos = models.CharField(max_length=30)
+    end_pos = models.CharField(max_length=30)
+    start_date = models.CharField(max_length=25)
+    end_date = models.CharField(max_length=25)

@@ -13,6 +13,8 @@
 
         <form role="form" method='post'>
             {% csrf_token %}
+        <input hidden id="id_t" name="t">
+        <input hidden id="id_be" name="be">
 {#            {% include "include/sidebar.html" %}#}
 
       <div class="col-md-2 no-padding" >
@@ -90,15 +92,20 @@
                                  <div class="form-group">
                                   <label for="id_binary_end" style="margin-top: 10px">End Binlog:</label>
                                     <select id="id_binary_end" class="form-control col-md-3" name = "binary_list_end">
-                                    <option selected="selected" disabled >----Select end of binlog</option>
+                                    {% if be %}
+                                        {{ be|safe }}
+                                    {% else %}
+                                    <option selected="selected"  value="0">----Select end of binlog----</option>
                                         {% for obj in binlist %}
-                                            {% if  binname_end in obj %}
+                                            {% if  binname_end in obj and binname_end != '0' %}
                                                 <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
                                             {% else %}
-                                                <option value ="{{ obj }}" >{{ obj }}</option>
+                                                <option disabled value ="{{ obj }}" >{{ obj }}</option>
                                             {% endif %}
                                         {% endfor %}
-                                    </select>
+                                 {% endif %}
+                                                                        </select>
+
                                 </div>
                             </div>
                             <div class="col-md-3  ">
@@ -119,15 +126,20 @@
                             <div class="col-md-3  ">
                                  <div class="form-group">
                                      <label for="id_tblist" style="margin-top: 10px">TABLE:</label>
+
                                        <select  id="id_tblist" class="form-control col-md-3" name = "tblist">
-                                       <option selected value="0" >----ALL----</option>
-                                        {% for obj in tblist %}
-                                            {% if obj == dbselected %}
-                                            <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
-                                        {% else %}
-                                            <option value ="{{ obj }}" >{{ obj }}</option>
-                                        {% endif %}
-                                    {% endfor %}
+                                           {% if t %}
+                                               {{ t|safe }}
+                                           {% else %}
+                                           <option selected value="0" >----ALL----</option>
+                                            {% for obj in tblist %}
+                                                {% if obj == dbselected %}
+                                                <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value ="{{ obj }}" >{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                           {% endif %}
                                 </select>
                                 </div>
                             </div>
@@ -204,13 +216,13 @@
                         <div class="row" style="margin-top: 20px">
 
                             <div class="col-md-3 " >
-                               <button title="只看binlog选择项，其它选项无视" name="parse_first" style="margin-top: 5px" class="btn btn-default col-md-12" value="1">查看解析前5条</button >
+                               <button title="只看binlog选择项，其它选项无视" onclick="save_t()" name="parse_first" style="margin-top: 5px" class="btn btn-default col-md-12" value="1">查看解析前5条</button >
                             </div>
                             <div class="col-md-3 " >
-                                <button id="parse_binlog" style="margin-top: 5px" name="parse"  class="btn btn-success col-md-12" value="1">PARSE BINLOG FOR REDO</button >
+                                <button id="parse_binlog" style="margin-top: 5px" name="parse"  onclick="save_t()"  class="btn btn-success col-md-12" value="1">PARSE BINLOG FOR REDO</button >
                             </div>
                             <div class="col-md-3 " >
-                                <button name="parse_undo"  style="margin-top: 5px" class="btn btn-danger col-md-12" value="1">PARSE BINLOG FOR UNDO</button >
+                                <button name="parse_undo"  style="margin-top: 5px"  onclick="save_t()"  class="btn btn-danger col-md-12" value="1">PARSE BINLOG FOR UNDO</button >
                             </div>
                         </div>
 
@@ -266,6 +278,24 @@
 
 
 <script>
+function save_t(){
+    var selected_table = $("#id_tblist").val();
+    var index = $("#id_tblist").get(0).selectedIndex;
+    if (selected_table !== null){
+        var SelectArr = $("#id_tblist");
+        console.log(SelectArr.length);
+        $("#id_tblist option").each(function(i,data){
+            if (i === index){
+                    $(this).attr('selected','true')
+            }
+        })
+
+        }
+    var html = $("#id_tblist").html();
+    $("#id_t").val(html);
+    var be_html = $("#id_binary_end").html();
+    $("#id_be").val(be_html)
+}
 
 function change_group(flag,selected_group,selected_host) {
 
@@ -350,12 +380,19 @@ function change_group(flag,selected_group,selected_host) {
                 }
                     else{
                      $(this).removeAttr('disabled');
-                    if (i === Sindex+1){
-                       $(this).attr('selected','true')
+                        if (i === Sindex+1){
+                        $(this).attr('selected','true')
+
                     }
 
                     }
-            })
+            });
+            if($('#id_binary_end').val() === null){
+                var SelectArr = $("#id_binary_end");
+                for (var i = 0; i < SelectArr.length; i++) {
+                    SelectArr[i].options[0].disabled = false;
+                    SelectArr[i].options[0].selected = true;   }  }
+
         })
         ;
 
