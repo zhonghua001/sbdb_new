@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import csv,os
-import datetime
 import json
 from django.utils import timezone
 from accounts.permission import permission_verify
@@ -2542,11 +2541,23 @@ def diff(request):
 # @permission_required('myapp.can_see_metadata', login_url='/')
 @permission_verify()
 def get_binlog_datetime(request):
-    instance_id = int(request.GET['instance_id'])
-    binlog_start = request.GET['binlog_start'].split(' ')[0]
-    binlog_datetime = Binlog_datetime.objects.filter(instance_id=instance_id, binlog_file__contains=binlog_start)[1]
-    if len(binlog_datetime) > 0:
-        return HttpResponse(json.dumps({'start_time':binlog_datetime.start_time}))
+    try:
+        message = 'success'
+        instance_id = int(request.GET['instance_id'])
+        binlog_start = (request.GET['binlog_start'].split(' '))[0]
+        binlog_datetime = Binlog_datetime.objects.filter(instance_id=instance_id, binlog_file__contains=binlog_start)[0:1]
+        binlog_start_time = datetime.strftime(
+            datetime.fromtimestamp(int(binlog_datetime[0].start_date)),'%Y-%m-%d %H:%M:%S'
+        )
+        binlog_end_time = datetime.strftime(
+            datetime.fromtimestamp(int(binlog_datetime[0].end_date)), '%Y-%m-%d %H:%M:%S'
+        )
+        if len(binlog_datetime) > 0:
+            return HttpResponse(json.dumps({'start_time':binlog_start_time,'end_time':binlog_end_time,'message':message}))
+    except Exception,e:
+        print e
+        message = 'failed'
+        return HttpResponse(json.dumps({'message':message}))
 
 
 

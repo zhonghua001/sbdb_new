@@ -103,16 +103,14 @@
 
     <script type="text/javascript">
         //jeDate.skin('gray');
-        jeDate({
-            dateCell:"#id_begin",
+        $("#id_begin").jeDate({
             format:"YYYY-MM-DD hh:mm:ss",
             isinitVal:true,
             isTime:true, //isClear:false,
             minDate:"2014-09-19 00:00:00",
             okfun:function(val){alert(val)}
         })
-        jeDate({
-            dateCell:"#id_end",
+        $("#id_end").jeDate({
             format:"YYYY-MM-DD hh:mm:ss",
             isinitVal:true,
             isTime:true, //isClear:false,
@@ -121,7 +119,7 @@
         })
     </script>
     {% block script %}
-    {% include "include/pagejump/pagejump.html" %}
+{#    {% include "include/pagejump/pagejump.html" %}#}
 {% endblock %}
 
     <script>
