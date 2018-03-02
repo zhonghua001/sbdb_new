@@ -2409,7 +2409,7 @@ def mysql_binlog_parse(request):
                                     d = {}
                                     for i in stdout:
                                         d[i.replace('\n', '').split(' = ')[0]] = i.replace('\n', '').split(' = ')[1]
-                                    if not Binlog_datetime.objects.filter(instance_id=insname.id, binlog_file=d['cur_binlog']).exists:
+                                    if not Binlog_datetime.objects.filter(instance_id=insname.id, binlog_file=d['cur_binlog']).exists():
                                         binlog_save = Binlog_datetime.objects.create(
                                                                                     instance_id = insname.id,
                                                                                     binlog_file = d['cur_binlog'],

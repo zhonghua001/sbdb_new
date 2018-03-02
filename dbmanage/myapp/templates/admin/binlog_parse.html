@@ -57,7 +57,7 @@
                      <div class="col-md-12 no-padding text-center" style="margin-top: 10px">
 
                               <button name="show_binary" class="btn btn-primary" style="width: 100%" value="1">show binary logs and DB</button >
-                              <button name="show_binary_datetime" class="btn btn-danger" style="margin-top: 10px;width: 100%" value="1">Analyze binlog datetime</button >
+                              <button name="show_binary_datetime" onclick="load()" class="btn btn-danger" style="margin-top: 10px;width: 100%" value="1">Analyze binlog datetime</button >
 
                      </div>
                     </div>
@@ -85,7 +85,7 @@
                                             {% if  binname_start in obj %}
                                                 <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
                                             {% else %}
-                                                <option value ="{{ obj }}" >{{ obj }}</option>
+                                                <option onmouseover="tooltip(this)" onmouseout="nodisplay()" onclick="nodisplay()" title='fdssssssssssssssssssssssssssssssssssssssss' value ="{{ obj }}" >{{ obj }}</option>
                                             {% endif %}
                                         {% endfor %}
                                     </select>
@@ -234,7 +234,7 @@
         </div>
          </div>
         </form >
-
+<div id="tooltipBlock" style="position: relative; display: none;">sdffds</div>
         <div class="col-md-12" >
             {% if info %}
                 <span style="color:red">{{ info }}</span>
@@ -278,11 +278,35 @@
     {#            }#}
     {##}
     {#        </script>#}
+<script>
+    var tip = document.getElementById("tooltipBlock");
+	var selects = document.getElementById("id_binary_start");
+	function tooltip(obj) {
+		var x = selects.offsetLeft, y = obj.offsetTop, h = obj.offsetHeight, w = selects.offsetWidth;
+		/*tip.style.width = w + "px";  （这部分是定义显示提示的块的宽度） */
+		tip.style.marginLeft = x + w + "px";
+		tip.style.marginTop = y - 30 +  "px";
+		tip.style.display = "block";
+		tip.innerHTML = "这部分为程序传递（把数据库里相关国家资料传过来）";
+	}
+	function nodisplay() {
+		tip.style.display = "none";
+	}
+
+</script>
+
+
+
 
 
 <script>
-
-
+function load() {
+    var index = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+//loading层
+{#    var index = layer.load(1, {#}
+{#        shade: [0.1, '#fff'] //0.1透明度的白色背景#}
+{#    });#}
+}
 
 
 
@@ -386,7 +410,7 @@ var start = {
     format:"YYYY-MM-DD hh:mm:ss",
     initDate:[{YYYY:2015,MM:12,DD:23,hh:10,mm:0,ss:0},true],
     isinitVal:true,
-    hmsLimit:false,
+{#    hmsLimit:false,#}
     festival: true,
     isTime:true, //isClear:false,
     startMin:'',
@@ -405,28 +429,8 @@ var end = {
     maxDate:''
 };
 
-
-$("#id_binary_end").change(function () {
-    var instance_id = $("#select_host").val();
-    var binlog_start = $(this).val();
-     $.get("{% url 'get_binlog_datetime' %}",{'instance_id':instance_id,'binlog_start':binlog_start}).done(function (data) {
-         console.log(JSON.parse(data).start_time);
-         console.log(JSON.parse(data).end_time);
-         if (JSON.parse(data).message === 'success' ){
-               start.minDate = JSON.parse(data).start_time;
-               start.maxDate =  JSON.parse(data).end_time;
-               end.minDate = JSON.parse(data).start_time;
-               end.maxDate = JSON.parse(data).end_time;
-               $("#inpstart").jeDate(start);
-               $("#inpend").jeDate(end);
-
-            }
-
-     });
-
-
-
-
+ $("#id_begin_time").jeDate(start);
+               $("#id_end_time").jeDate(end);
 
 
 $("#id_binary_start").change(function () {
@@ -436,19 +440,20 @@ $("#id_binary_start").change(function () {
          console.log(JSON.parse(data).start_time);
          console.log(JSON.parse(data).end_time);
          if (JSON.parse(data).message === 'success' ){
-             $("#id_begin_time").jeDate({
-                format:"YYYY-MM-DD hh:mm:ss",
-                initDate:[{YYYY:2015,MM:12,DD:23,hh:10,mm:0,ss:0},true],
-                isinitVal:true,
-                hmsLimit:false,
-                festival: true,
-                isTime:true, //isClear:false,
-                startMin:$.nowDate(-3),
-                minDate:JSON.parse(data).start_time,
-                maxDate:JSON.parse(data).end_time
-            })
+             layer.tips('我是另外一个tips，只不过我长得跟之前那位稍有些不一样。', '吸附元素选择器', {
+              tips: [1, '#3595CC'],
+              time: 4000
+            });
+             $(this).title = JSON.parse(data).start_time + '|' +JSON.parse(data).end_time;
+             start.minDate =  JSON.parse(data).start_time;
+             start.maxDate =  JSON.parse(data).end_time;
+             end.maxDate = JSON.parse(data).end_time;
+               $("#id_begin_time").jeDate(start);
+               $("#id_end_time").jeDate(end);
+
+
          }
-     });
+     })
 
 
     var Sindex = $(this).get(0).selectedIndex;
@@ -476,6 +481,31 @@ $("#id_binary_start").change(function () {
 
 })
 ;
+
+
+
+
+
+
+
+
+
+$("#id_binary_end").change(function () {
+    var instance_id = $("#select_host").val();
+    var binlog_start = $(this).val();
+     $.get("{% url 'get_binlog_datetime' %}",{'instance_id':instance_id,'binlog_start':binlog_start}).done(function (data) {
+         console.log(JSON.parse(data).start_time);
+         console.log(JSON.parse(data).end_time);
+         if (JSON.parse(data).message === 'success' ){
+               end.maxDate = JSON.parse(data).end_time;
+               $("#id_begin_time").jeDate(start);
+               $("#id_end_time").jeDate(end);
+
+            }
+
+     })
+});
+
 
 
     </script>
