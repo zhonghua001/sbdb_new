@@ -2383,34 +2383,38 @@ def mysql_binlog_parse(request):
                 # parse_binlog(insname, binname, begintime, tbname, dbselected, request.user.username, countnum,True)
                 info = "Binlog UNDO Parse mission uploaded"
             elif request.POST.has_key('show_binary_datetime'):
+                try:
+                    binlog_path, error = meta.get_process_data(insname, "show variables like 'log_bin_basename'")
+                    if col_binary != ['error'] and error != ['error']:
+                        binlog_list = []
+                        for b in binlist:
+                            binlog_list.append('/'.join(binlog_path[0][1].split('/')[:-1])+'/'+b.split(' ')[0])
 
-                binlog_path, error = meta.get_process_data(insname, "show variables like 'log_bin_basename'")
-                if col_binary != ['error'] and error != ['error']:
-                    binlog_list = []
-                    for b in binlist:
-                        binlog_list.append('/'.join(binlog_path[0][1].split('/')[:-1])+'/'+b.split(' ')[0])
-
-                    local_path = os.path.dirname(__file__) + '/script/binlog_datetime.py'
-                    remote_path = '/tmp/binlog_datetime.py'
-                    r = remote_scp(insname.ip, 'put', local_path, remote_path)
-                    if r == 1:
-                        for binlog in binlog_list:
-                            stdin, stdout, stderr = remote_scp(insname.ip, 'command',
-                                                               command='python /tmp/binlog_datetime.py {}'.format(binlog)
-                                                               )
-                            if stderr.read() == '':
-                                stdout = stdout.read()
-                                cur_binlog = stdout.read()['next_binlog']
-                                start_time = stdout.read()['start_time']
-                                end_time = stdout.read()['end_time']
-                                start_pos = stdout.read()['start_pos']
-                                end_pos = stdout.read()['end_pos']
-                                binlog_save = Binlog_datetime.objects.create(binlog_file = cur_binlog,
-                                                                            start_pos = start_pos,
-                                                                            end_pos = end_pos,
-                                                                            start_date = start_time,
-                                                                            end_date = end_time
-                                                                )
+                        local_path = os.path.dirname(__file__) + '/script/binlog_datetime.py'
+                        remote_path = '/tmp/binlog_datetime.py'
+                        remote_scp(insname.ip, 'command',
+                                     command='rm -f /tmp/binlog_datetime.py')
+                        r = remote_scp(insname.ip, 'put', local_path=local_path, remote_path=remote_path)
+                        if r == 1:
+                            for binlog in binlog_list:
+                                stdin, stdout, stderr = remote_scp(insname.ip, 'command',
+                                                                   command='python /tmp/binlog_datetime.py {}'.format(binlog)
+                                                                   )
+                                if stderr.read() == '':
+                                    stdout = stdout.readlines()
+                                    d = {}
+                                    for i in stdout:
+                                        d[i.replace('\n', '').split(' = ')[0]] = i.replace('\n', '').split(' = ')[1]
+                                    binlog_save = Binlog_datetime.objects.create(binlog_file = d['cur_binlog'],
+                                                                                start_pos = d['start_pos'],
+                                                                                end_pos = d['end_pos'],
+                                                                                start_date = d['start_time'],
+                                                                                end_date = d['end_time']
+                                                                    )
+                except Exception,e:
+                    pass
+                finally:rm = remote_scp(insname.ip, 'command',
+                                     command='rm -f /tmp/binlog_datetime.py')
 
 
         except Exception,e:

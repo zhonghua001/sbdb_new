@@ -209,14 +209,15 @@ if __name__ == '__main__' :
     if len(sys.argv) == 2 :
         mysql_binlog = sys.argv[1]
         info = get_info(mysql_binlog)
-        print info
-
+        # print info
+        for k,v in info.items():
+            print '%s = %s' % (k , v)
     # else :
     #     print 'Usage : \n./readbinlog.py <mysql-bin-log>'
     #     exit()
 
-    print time.time()
-    info = get_info('/var/log/mysql/binlog/mysql-bin.000211')
-    for (k ,v) in info.items() :
-        print '%s = %s' % (k , v)
-    print time.time()
+    # print time.time()
+    # info = get_info('/var/log/mysql/binlog/mysql-bin.000211')
+    # for (k ,v) in info.items() :
+    #     print '%s = %s' % (k , v)
+    # print time.time()
