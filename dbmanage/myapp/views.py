@@ -2384,6 +2384,7 @@ def mysql_binlog_parse(request):
                 info = "Binlog UNDO Parse mission uploaded"
             elif request.POST.has_key('show_binary_datetime'):
                 try:
+                    info = 'binlog parse datetime OK!'
                     binlog_path, error = meta.get_process_data(insname, "show variables like 'log_bin_basename'")
                     if col_binary != ['error'] and error != ['error']:
                         binlog_list = []
@@ -2396,7 +2397,11 @@ def mysql_binlog_parse(request):
                                      command='rm -f /tmp/binlog_datetime.py')
                         r = remote_scp(insname.ip, 'put', local_path=local_path, remote_path=remote_path)
                         if r == 1:
-                            for binlog in binlog_list:
+                            binlog_parsed = map(lambda x:x['binlog_file'],
+                                                   Binlog_datetime.objects.filter(instance_id=insname.id).values('binlog_file')
+                                                   )
+
+                            for binlog in filter(lambda x:x not in binlog_parsed,binlog_list[:-1]):
                                 stdin, stdout, stderr = remote_scp(insname.ip, 'command',
                                                                    command='python /tmp/binlog_datetime.py {}'.format(binlog)
                                                                    )
@@ -2405,13 +2410,18 @@ def mysql_binlog_parse(request):
                                     d = {}
                                     for i in stdout:
                                         d[i.replace('\n', '').split(' = ')[0]] = i.replace('\n', '').split(' = ')[1]
-                                    binlog_save = Binlog_datetime.objects.create(binlog_file = d['cur_binlog'],
-                                                                                start_pos = d['start_pos'],
-                                                                                end_pos = d['end_pos'],
-                                                                                start_date = d['start_time'],
-                                                                                end_date = d['end_time']
+                                    if not Binlog_datetime.objects.filter(instance_id=insname.id, binlog_file=d['cur_binlog']).exists:
+                                        binlog_save = Binlog_datetime.objects.create(
+                                                                                    instance_id = insname.id,
+                                                                                    binlog_file = d['cur_binlog'],
+                                                                                    start_pos = d['start_pos'],
+                                                                                    end_pos = d['end_pos'],
+                                                                                    start_date = d['start_time'],
+                                                                                    end_date = d['end_time']
                                                                     )
+
                 except Exception,e:
+                    info = 'Error ' + str(e)
                     pass
                 finally:rm = remote_scp(insname.ip, 'command',
                                      command='rm -f /tmp/binlog_datetime.py')
@@ -2526,6 +2536,26 @@ def diff(request):
 
 
 
+
+
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_metadata', login_url='/')
+@permission_verify()
+def get_binlog_datetime(request):
+    instance_id = int(request.GET['instance_id'])
+    binlog_start = request.GET['binlog_start'].split(' ')[0]
+    binlog_datetime = Binlog_datetime.objects.filter(instance_id=instance_id, binlog_file__contains=binlog_start)[1]
+    if len(binlog_datetime) > 0:
+        return HttpResponse(json.dumps({'start_time':binlog_datetime.start_time}))
+
+
+
+
+
+
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_metadata', login_url='/')
+@permission_verify()
 def get_db(request):
     instance = Db_instance.objects.get(id=int(request.GET['instance_id']))
     data_list, col_list = meta.process(instance, 9)

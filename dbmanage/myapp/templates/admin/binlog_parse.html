@@ -350,6 +350,7 @@ function change_group(flag,selected_group,selected_host) {
             isinitVal:true,
             isTime:true, //isClear:false,
             minDate:"2014-09-19 00:00:00",
+            
             okfun:function(val){alert(val)}
         })
     </script>
@@ -370,6 +371,15 @@ function change_group(flag,selected_group,selected_host) {
 
 
         $("#id_binary_start").change(function () {
+            var instance_id = $("#select_host").val()
+            var binlog_start = $(this).val()
+             $.get("{% url 'get_binlog_datetime' %}",{'instance_id':instance_id,'binlog_start':binlog_start}).done(function (data) {
+                for (var i =0 ; i <= data.length - 1; i++) {
+                    $("#id_tblist").append("<option value='" + data[i]  + "'>" + data[i] + "</option>");
+
+                };
+
+
             var Sindex = $(this).get(0).selectedIndex;
             $("#id_binary_end option").each(function (i,data) {  //遍历所有option
                 $(this).removeAttr('selected');

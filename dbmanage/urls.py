@@ -57,6 +57,7 @@ urlpatterns = [
     url(r'^acc_list_callback/$',myapp_view.acc_list_callback,name='acc_list_callback'),
     url(r'^perm_detail_edit/(\d+)$',myapp_view.perm_detail_edit,name='perm_detail_edit'),
     url(r'^change_task_period/$', myapp_view.change_task_period, name='change_task_period'),
+    url(r'^get_binlog_datetime/$', myapp_view.get_binlog_datetime, name='get_binlog_datetime'),
 
 
 
