@@ -2,90 +2,95 @@
 import MySQLdb,sys,string,time,datetime,uuid,pymongo,json
 # from django.contrib.auth.models import User
 from accounts.models import UserInfo
-from dbmanage.myapp.models import Db_name,Db_account,Db_instance
+from dbmanage.myapp.models import Db_name,Db_account,Db_instance,Db_database_permission
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from dbmanage.myapp.include.encrypt import prpcrypt
+from cmdb.models import Host,HostGroup
+from dbmanage.myapp.include.encrypt import prpcrypt
+
 
 public_user = settings.PUBLIC_USER
 export_limit = int(settings.EXPORT_LIMIT)
-def get_mongodb_list(username,tag='tag',search=''):
+def get_mongodb_list(request,tag='tag',search=''):
+    permission_list = ''
+    if tag == 'query':
+        permission_list = ('read', 'read_write', 'all')
+    elif tag == 'exec':
+        permission_list = ('write', 'read_write', 'all')
+    elif tag == 'log':
+        permission_list = ('read', 'read_write', 'all')
+    elif tag == 'meta':
+        permission_list = ('read', 'read_write', 'all')
+    elif tag == 'incep':
+        permission_list = ('write', 'read_write', 'all')
+
+    elif tag == 'admin':
+        permission_list = ('admin')
     dbtype='mongodb'
     host_list = []
-    if len(search) ==0:
-        if (tag=='tag'):
-            a = UserInfo.objects.get(username=username)
-            #如果没有对应role='read'或者role='all'的account账号，则不显示在下拉菜单中
-            for row in a.db_name_set.all().order_by("dbtag"):
-                if row.db_account_set.all().filter(role__in=['read','all']):
-                    if row.instance.all().filter(role__in=['read','all']).filter(db_type=dbtype):
-                        host_list.append(row.dbtag)
-        elif (tag=='log'):
-            for row in Db_name.objects.values('dbtag').distinct().order_by("dbtag"):
-                host_list.append(row['dbtag'])
-        elif (tag=='exec'):
-            a = UserInfo.objects.get(username=username)
-            #如果没有对应role='write'或者role='all'的account账号，则不显示在下拉菜单中
-            for row in a.db_name_set.all().order_by("dbtag"):
-                if row.db_account_set.all().filter(role__in=['write','all']):
-            #排除只读实例
-                    if row.instance.all().filter(role__in=['write','all']).filter(db_type=dbtype):
-                        host_list.append(row.dbtag)
-    elif len(search) > 0:
-        if (tag=='tag'):
-            a = UserInfo.objects.get(username=username)
-            #如果没有对应role='read'或者role='all'的account账号，则不显示在下拉菜单中
-            for row in a.db_name_set.filter(dbname__contains=search).order_by("dbtag"):
-                if row.db_account_set.all().filter(role__in=['read','all']):
-                    if row.instance.all().filter(role__in=['read','all']).filter(db_type=dbtype):
-                        host_list.append(row.dbtag)
-        elif (tag=='log'):
-            for row in Db_name.objects.values('dbtag').distinct().order_by("dbtag"):
-                host_list.append(row['dbtag'])
-        elif (tag=='exec'):
-            a = UserInfo.objects.get(username=username)
-            #如果没有对应role='write'或者role='all'的account账号，则不显示在下拉菜单中
-            for row in a.db_name_set.filter(dbname__contains=search).order_by("dbtag"):
-                if row.db_account_set.all().filter(role__in=['write','all']):
-            #排除只读实例
-                    if row.instance.all().filter(role__in=['write','all']).filter(db_type=dbtype):
-                        host_list.append(row.dbtag)
-    return host_list
+    if request.GET.has_key('host_group'):
+        selected_group = request.GET.get('host_group')
+        login_user =  request.user.username
+        user_info = UserInfo.objects.get(username=login_user)
+        host = Host.objects.filter(group=selected_group)
+        ip_list = list(set([x.ip for x in host]))
+        if tag == 'admin':
+            db_instances = Db_instance.objects.filter(ip__in=tuple(ip_list), db_type='mongodb',
+                                                      status='InUse', admin_user=user_info)
+
+        else:
+            db_instances = Db_instance.objects.filter(
+                db_account__db_name__db_database_permission__account__id=user_info.id,
+                ip__in=tuple(ip_list), db_type='mongodb', status='InUse',
+                db_account__db_name__db_database_permission__permission__in=permission_list).distinct()
+        db_list = []
+        for instance in db_instances:
+            id = instance.id
+            ip = instance.ip
+            port = instance.port
+            explain = instance.comments
+            db_list.append({'id': id, 'port': port, 'ip': ip, 'explain': explain})
+
+        return db_list
+    elif request.GET.has_key('instance_id'):
+        instance_id = request.GET.get('instance_id')
+        login_user = UserInfo.objects.get(username=request.user.username)
+
+        dbs = Db_database_permission.objects.filter(account_id=login_user.id, permission__in=permission_list) \
+            .filter(db_name__dbaccount__instance__id=int(instance_id)) \
+            .values('db_name__dbaccount__id', 'db_name__dbaccount__db_account_role', 'db_name__dbname',
+                    'db_name__dbtag')
+        data = []
+        for db in dbs:
+            db_account_id = db['db_name__dbaccount__id']
+            db_account_role = db['db_name__dbaccount__db_account_role']
+            db_name = db['db_name__dbname']
+            db_tag = db['db_name__dbtag']
+            data.append({'db_account_id': db_account_id, 'db_account_role': db_account_role, 'db_name': db_name,
+                         'db_tag': db_tag})
+
+        return data
 
 
 def get_mongo_coninfo(hosttag,useraccount):
 
-    a = Db_name.objects.filter(dbtag=hosttag)[0]
-    # a = Db_name.objects.get(dbtag=hosttag)
-    tar_dbname = a.dbname
-    try:
-        if a.instance.all().filter(role='read')[0]:
-            tar_host = a.instance.all().filter(role='read')[0].ip
-            tar_port = a.instance.all().filter(role='read')[0].port
-    # 如果没有设置或没有role=read，则选择第一个读到的all实例读取
-    except Exception, e:
-        tar_host = a.instance.filter(role='all')[0].ip
-        tar_port = a.instance.filter(role='all')[0].port
-        # tar_host = a.instance.all()[0].ip
-        # tar_port = a.instance.all()[0].port
-    for i in a.db_account_set.all():
-        if i.role != 'write' and i.role != 'admin':
-            # find the specified account for the user
-            if i.account.all().filter(username=useraccount):
-                tar_username = i.user
-                tar_passwd = i.passwd
-                break
-    # not find specified account for the user ,specified the public account to the user
-    if not vars().has_key('tar_username'):
-        for i in a.db_account_set.all():
-            if i.role != 'write' and i.role != 'admin':
-                # find the specified account for the user
-                if i.account.all().filter(username=public_user):
-                    tar_username = i.user
-                    tar_passwd = i.passwd
-                    break
     pc = prpcrypt()
-    return tar_host,tar_port,tar_username,pc.decrypt(tar_passwd),tar_dbname
+    # a = Db_name.objects.get(dbtag=hosttag)
+    db_account_id,tar_dbname = hosttag.split(':')
+
+    db_account = Db_account.objects.get(id=int(db_account_id))
+    try:
+        tar_username = db_account.user
+        tar_passwd = pc.decrypt(db_account.passwd)
+        tar_host = db_account.instance.ip
+        tar_port = db_account.instance.port
+        db_tag = db_account.instance.ip + ':' + db_account.instance.port + '__' + db_account.db_account_role
+        return tar_host, tar_port, tar_username, tar_passwd, tar_dbname
+
+    except:
+        pass
+
 
 
 def get_db_info(hosttag,useraccount):

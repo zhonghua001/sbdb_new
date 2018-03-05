@@ -258,7 +258,7 @@
         <div class="box-body form-group col-md-12">
 
                <div class="col-md-3">
-                   <h2><label>Group:</label></h2>
+                   <h4><label>Group:</label></h4>
                  <select id="id_select_group_db_user" onchange="change_group_db_user(-1,{{ select_group|default:0 }},'{{ select_host.id|default:0 }}')" class="form-control col-md-12"  name = "select_group_db_user">
                             <option value ="" selected disabled >---Select Host Group---</option>
                             {% for group in host_group %}
@@ -272,7 +272,7 @@
               </div>
 
               <div class="col-md-9 col-sm-6 col-xs-12">
-                  <h2><label>Instance:</label></h2>
+                  <h4><label>Instance:</label></h4>
                   <select  id="select_host_db_user" onchange="get_db()" class="form-control col-md-5" name = "ins_set_db_user">
                         <option value ="" selected disabled >---Select Host ---</option>
 
@@ -286,7 +286,7 @@
 
     <div class="col-md-11">
                 <div class="col-md-3" style="margin-left: -15px;" >
-                    <h1><label>READ:</label></h1>
+                    <h4><label>READ:</label></h4>
                     <select id="id_select_read" class="col-md-12" multiple="multiple" style="height:200px"></select>
                       <!-- /btn-group -->
                       <div class="input-group">
@@ -305,7 +305,7 @@
 
                 </div>
                 <div class="col-md-3">
-                    <h1><label>WRITE:</label></h1>
+                    <h4><label>WRITE:</label></h4>
                     <select id="id_select_write" class="col-md-12" multiple="multiple" style="height:200px"></select>
                     <div class="input-group">
                         <input id="write_new-event" type="text" class="form-control" placeholder="DB Name">
@@ -326,7 +326,7 @@
                       </div>
                 </div>
                 <div class="col-md-3">
-                    <h1><label>READ-WRITE:</label></h1>
+                    <h4><label>READ-WRITE:</label></h4>
                     <select id="id_select_read_write" class="col-md-12" multiple="multiple" style="height:200px"></select>
                     <div class="input-group">
                         <input id="read_write_new-event" type="text" class="form-control" placeholder="DB Name">
@@ -346,7 +346,7 @@
                       </div>
                 </div>
               <div class="col-md-3">
-                    <h1><label>ALL:</label></h1>
+                    <h4><label>ALL:</label></h4>
                     <select id="id_select_all" class="col-md-12" multiple="multiple" style="height:200px"></select>
                     <div class="input-group">
                         <input id="all_new-event" type="text" class="form-control" placeholder="DB Name">
@@ -379,7 +379,7 @@
     </div>
     <div class="tab-pane " id="fa-sysaccount">
             <div class="col-md-12">
-                   <h2><label>Group:</label></h2>
+                   <h4><label>Group:</label></h4>
                  <select id="id_select_group_sysaccount" onchange="change_group_sysaccount(-1,{{ select_group|default:0 }},'{{ select_host.id|default:0 }}')" class="form-control col-md-12"  name = "select_group_db_user">
                             <option value ="" selected disabled >---Select Host Group---</option>
                             {% for group in host_group %}
@@ -393,7 +393,7 @@
               </div>
             <div class="col-md-12 col-sm-6 col-xs-12">
 
-                  <h2><label>Instance:</label></h2>
+                  <h4><label>Instance:</label></h4>
 
                   <select  id="select_host_sysaccount" class="form-control col-md-5" name = "ins_set_db_user">
                         <option value ="" selected disabled >---Select Host ---</option>

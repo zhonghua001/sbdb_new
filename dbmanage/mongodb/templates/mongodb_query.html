@@ -1,23 +1,23 @@
 {% extends "include/base.html" %}
+{% load static %}
 {% block title %}
     <title>MONGO_QUERY</title>
+
 {% endblock %}
 {% block name %}
+    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
     欢迎使用MongoDB<span style="color:red">查询</span>功能
+
 {% endblock %}
 {%block db_content%}
     <div id="wrapper">
 {#        {% include "include/sidebar.html" %}#}
 
         <div id="page-content-wrapper">
-            <table >
                 <form role="form" method='post'>
-                    <tr>
-                        <td>
-                            </br>
-                            </br>
-
                             {% csrf_token %}
+
                             CHOOSE :
                             {#                {%  if choosed_table %}#}
                             {#                    <select class="form-control col-md-1" name = "tablename">#}
@@ -32,39 +32,39 @@
                             {#                    </select>#}
                             {#                {% endif %}#}
 
-                            {%  if choosedb %}
-                                {#                                <select class="form-control col-md-1" name = "cx">#}
-                                {#                                    <option value ="{{ choosed_host }}">{{ choosed_host }}</option>#}
-                                {#                                </select></br>#}
-                                <select class="form-control col-md-1" name = "choosedb">
-                                    {% for obj in dblist %}
-                                        {% if obj == choosedb %}
-                                            <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
+                            <select id="id_select_group" onchange="change_group_mongodb(-1,{{ select_group|default:0 }},'{{ select_host|default:0 }}')" class="form-control col-md-12"  name = "select_group">
+                                <option value ="" selected disabled >---Select Host Group---</option>
+                                    {% for group in host_group %}
+                                        {% if group.id == select_group %}
+                                            <option selected="selected" value ="{{ group.id }}">{{ group.name }}</option>
                                         {% else %}
-                                            <option value ="{{ obj }}">{{ obj }}</option>
+                                            <option value ="{{ group.id }}">{{ group.name }}</option>
                                         {% endif %}
                                     {% endfor %}
-                                </select></br>
+                            </select>
+
+                            <select  id="select_host"  onchange="change_host(1)"  class="form-control col-md-12" name = "ins_set">
+                                <option value ="" selected disabled >---Select Host ---</option>
+                            </select>
+
+                             <select  id="id_db"   class="form-control col-md-12" name = "dbname">
+                                <option value ="" selected disabled >---Select DB ---</option>
+                            </select>
+
+
+                                {#                                    <option value ="{{ choosed_host }}">{{ choosed_host }}</option>#}
+                                {#                                </select></br>#}
+
+                <div class="row col-md-12" style="margin-top: 10px;">
                                 <a href="/dbmanage/mongodb/query/"><input type="button" value="刷新" class="btn btn-danger"></a>
-                            {% else %}
-                                <select class="form-control col-md-1" name = "choosedb">
-                                    {% for obj in dblist %}
-                                        <option value ="{{ obj }}">{{ obj }}</option>
-                                    {% endfor %}
-                                </select>
-                            {% endif %}
 
 
 
 
-
-
-                            </br>
                             <button type="submit" name='dbinfo' class="btn btn-success" value="1">库状态</button >
 
                             <button type="submit" name='gettblist' class="btn btn-primary" value="1">列出表</button >
-                            </br>
-
+</div>
                             {%  if tblist %}
                                 <select class="form-control col-md-1" name = "choosed_tb">
                                     {% for obj in tblist %}
@@ -84,9 +84,8 @@
 
 
                             {% endif %}
-                        </td>
+
                         {%  if tblist %}
-                            <td>
                                 <div class="col-md-12">
                                     <h3>查询注意事项:</h3>
                                     <p class="bg-danger"> 1. 仅支持单条语句查询 </p>
@@ -94,19 +93,14 @@
                                     <p> 3. 简单匹配:{'telephone': 13800111101}</p>
                                     <p> 4. 区间查询:{'updateTime':{'$gt':1470281159895,'$lt':1470281159897}}</p>
                                 </div>
-                            </td>
                         {% endif %}
-                    </tr>
                 </form>
 
 
 
 
-            </table>
 
-            </br>
             {% if data_list %}
-                </br>
                 <table id="mytable" class="table table-condensed" border="1">
                     <thead>
                     <tr class="danger">
@@ -125,7 +119,6 @@
                 </table>
             {% endif %}
             {% if info %}
-                </br>
                 <table class="table table-condensed" border="1">
                     <tbody  >
                     {% for k,v in info.items %}
@@ -139,7 +132,6 @@
 
             {% endif %}
             {% if  indinfo %}
-                </br>
                 <table class="table table-condensed" border="1">
                     <tbody  >
                     {% for k,v in indinfo.items %}
@@ -169,7 +161,73 @@
 
     {% block script %}
     {% include "include/pagejump/tabledata.html" %}
-    <script>
+<script>
+function change_host(flag) {
+
+
+    var select_host = $("#select_host");
+    var instance_id = select_host.val();
+
+
+    if (instance_id === null) {
+        instance_id = "{{ select_host }}"
+    }
+    var select_db = "{{ select_db }}";
+    var id_db = $("#id_db");
+    $(id_db).empty();
+    $(id_db).append('<option selected disabled>----Select DB----</option>');
+
+
+    $.getJSON('/dbmanage/mongodb/query/', {'instance_id': instance_id}, function (ret) {
+
+        $.each(ret, function (key, value) {
+             v = value.db_account_id
+            var text = value.db_name+' ['+value.db_tag+']';
+            var html =  '<option  selected value="'+v+':'+value.db_name+'" >' +text+'</option>';
+            var html1 =  '<option   value="'+v+':'+value.db_name+'" >' +text+'</option>';
+            if ((v+':'+value.db_name) ===  select_db){
+                $(id_db).append(html)
+            }else{$(id_db).append(html1)}
+
+
+            console.log(value)
+
+        })
+    })
+}
+
+
+
+function change_group_mongodb(flag,selected_group,selected_host) {
+
+    var host_group = selected_group;
+    if (flag == -1) {
+        host_group = $("#id_select_group option:selected").val();
+    }
+{#    console.log(selected_group,selected_host)#}
+    var select_host = $("#select_host");
+    $(select_host).empty();
+    $(select_host).append('<option  id="select_host" value ="" selected disabled >---Select Host---</option>');
+
+    $.ajax({
+        url: '/dbmanage/mongodb/query/',
+        data: {'host_group': host_group},
+        success: function (ret) {
+            $.each(ret ,function(key,value){
+
+                var id = value.id;
+                var text = value.ip+":"+value.port+' '+value.explain;
+                if (id === selected_host){$(select_host).append('<option selected  value ="'+id+'" >'+text+'</option>')}
+                else{$(select_host).append('<option  value ="'+id+'" >'+text+'</option>')}
+            })
+        }
+    })
+}
+
+
+    </script>
+        <script>
+
 
         $("#menu-toggle").click(function(e) {
             e.preventDefault();
@@ -191,6 +249,15 @@
             fav.value = myfav;
         }
     </script>
+
+
+
+    <script>
+
+    change_group_mongodb(-2,{{ select_group|default:0 }},{{ select_host }});
+    change_host(-1)
+    </script>
+
 {% endblock %}
 
 

@@ -203,11 +203,13 @@ def get_hostlist(request,tag='tag'):
         host = Host.objects.filter(group=selected_group)
         ip_list = list(set([x.ip for x in host]))
         if tag == 'admin':
-            db_instances = Db_instance.objects.filter(ip__in=tuple(ip_list),db_type='mysql',status='InUse',admin_user = user_info)
+            db_instances = Db_instance.objects.filter(ip__in=tuple(ip_list),db_type='mysql',
+                                                      status='InUse',admin_user = user_info)
 
         else:
-            db_instances = Db_instance.objects.filter(db_account__db_name__db_database_permission__account__id=user_info.id, ip__in=tuple(ip_list),
-                                                  db_type='mysql',status='InUse',db_account__db_name__db_database_permission__permission__in=permission_list).distinct()
+            db_instances = Db_instance.objects.filter(db_account__db_name__db_database_permission__account__id=user_info.id,
+                                                      ip__in=tuple(ip_list),db_type='mysql',status='InUse',
+                                                      db_account__db_name__db_database_permission__permission__in=permission_list).distinct()
         db_list = []
         for instance in db_instances:
             id = instance.id
