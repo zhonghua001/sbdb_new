@@ -885,20 +885,22 @@ def get_diff(db_account_duibi,db_name_duibi,tb_duibi,db_account_canzhao,db_name_
     return result
 
 def get_conn_info(db_account):
-    instance = Db_account.instance
-    tar_host = instance.ip
-    tar_port = instance.port
-    tar_username = db_account.user
+    try:
+        instance = db_account.instance
+        tar_host = instance.ip
+        tar_port = instance.port
+        tar_username = db_account.user
 
-    #a = Db_name.objects.get(dbtag=hosttag)
-    #如果instance中有备库role='read'，则选择从备库读取
+        #a = Db_name.objects.get(dbtag=hosttag)
+        #如果instance中有备库role='read'，则选择从备库读取
 
-    pc = prpcrypt()
+        pc = prpcrypt()
 
-    tar_passwd = pc.decrypt(db_account.passwd)
+        tar_passwd = pc.decrypt(db_account.passwd)
 
-    return tar_host,tar_port,tar_username,tar_passwd
-
+        return tar_host,tar_port,tar_username,tar_passwd
+    except Exception,e:
+        print e
 
 
 

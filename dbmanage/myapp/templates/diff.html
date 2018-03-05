@@ -10,6 +10,7 @@
         <div id="page-content-wrapper">
 
             <form role="form" method='post'>
+            <input id="id_save_data" hidden name="save_data">
                 {% csrf_token %}
 {#                {% include "include/sidebar.html" %}#}
                 <div class="row">
@@ -22,7 +23,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                    <select id="id_select_group_duibi" onchange="change_group(-1,{{ select_group_duibi|default:0 }},'{{ select_host_duibi|default:0 }}','duibi')" class="form-control col-md-12"  name = "select_group_duibi">
+                    <select id="id_select_group_duibi" onchange="change_group_diff(-1,{{ select_group_duibi|default:0 }},'{{ select_host_duibi|default:0 }}','duibi')" class="form-control col-md-12"  name = "select_group_duibi">
                         <option value ="" selected disabled >----Select Host Group----</option>
                             {% for group in host_group %}
                                 {% if group.id == select_group_duibi %}
@@ -34,10 +35,17 @@
                     </select>
 
                     <select  id="select_host_duibi" onchange="change_host('{{ select_db_duibi|default:0 }}','duibi')" class="form-control col-md-12" name = "ins_set_duibi">
+                        {% if save_data %}
+                            {{ save_data.select_host_duibi|safe }}
+                        {% else %}
                         <option value ="" selected disabled >----Select Host----</option>
+                        {% endif %}
                     </select>
 
                     <select onchange="Change('duibi')" id="id_db_duibi" class="form-control col-md-1" title="选择比对库" name = "db_duibi">
+                         {% if save_data %}
+                            {{ save_data.db_duibi|safe }}
+                        {% else %}
                         <option value ="">-----Select DB-----</option>
                         {% for obj in objlist %}
                             {% if obj == choosed_host1 %}
@@ -46,21 +54,26 @@
                                 <option value ="{{ obj }}">{{ obj }}</option>
                             {% endif %}
                         {% endfor %}
+                    {% endif %}
                     </select>
 
                         <select id="id_tb_duibi" class="form-control col-md-1" title="选择比对表"  name = "tb_duibi">
+                         {% if save_data %}
+                            {{ save_data.tb_duibi|safe }}
+                        {% else %}
                             {% if choosed_tb1 %}
                                 <option selected="selected" value ="{{ choosed_tb_duibi }}">{{ choosed_tb_duibi }}</option>
 
                             {% else %}
                                 <option selected="selected" value ="">-----Select TB-----</option>
                             {% endif %}
+                        {% endif %}
                         </select>
 
                     </div>
                     <div class="col-md-6">
 
-                     <select id="id_select_group_canzhao" onchange="change_group(-1,{{ select_group_canzhao|default:0 }},'{{ select_host_canzhao|default:0 }}','canzhao')" class="form-control col-md-12"  name = "select_group_canzhao">
+                     <select id="id_select_group_canzhao" onchange="change_group_diff(-1,{{ select_group_canzhao|default:0 }},'{{ select_host_canzhao|default:0 }}','canzhao')" class="form-control col-md-12"  name = "select_group_canzhao">
                                 <option value ="" selected disabled >----Select Host Group----</option>
                                     {% for group in host_group %}
                                         {% if group.id == select_group_canzhao %}
@@ -72,10 +85,17 @@
                             </select>
 
                             <select  id="select_host_canzhao" onchange="change_host('{{ select_db_canzhao|default:0 }}','canzhao')" class="form-control col-md-12" name = "ins_set_canzhao">
+                                 {% if save_data %}
+                                    {{ save_data.select_host_canzhao|safe }}
+                                        {% else %}
                                 <option value ="" selected disabled >----Select Host----</option>
+                                {% endif %}
                             </select>
 
                         <select onchange="Change('canzhao')" id="id_db_canzhao" class="form-control col-md-1" title="选择参照库" name = "db_canzhao">
+                            {% if save_data %}
+                                    {{ save_data.db_canzhao|safe }}
+                                        {% else %}
                             <option value ="">----Select DB----</option>
                             {% for obj in objlist %}
                                 {% if obj == choosed_host2 %}
@@ -84,15 +104,20 @@
                                     <option value ="{{ obj }}">{{ obj }}</option>
                                 {% endif %}
                             {% endfor %}
+                        {% endif %}
                         </select>
 
                         <select id="id_tb_canzhao" class="form-control col-md-1"  title="选择参照表" name = "tb_canzhao">
+                        {% if save_data %}
+                                    {{ save_data.tb_canzhao|safe }}
+                                        {% else %}
                             {% if choosed_tb2 %}
                                 <option selected="selected" value ="{{ choosed_tb2 }}">{{ choosed_tb2 }}</option>
 
                             {% else %}
                                 <option selected="selected" value ="">----Select TB----</option>
                             {% endif %}
+                        {% endif %}
                         </select>
                     </div>
 
@@ -100,7 +125,7 @@
                 <hr />
                 <div class="row">
                     <div class="col-md-1">
-                        <button type="submit" name='check' class="btn btn-warning" >比对表结构</button>
+                        <button onclick="save_session()" type="submit" name='check' class="btn btn-warning" >比对表结构</button>
 
                     </div>
                     <div class="col-md-1">
@@ -144,7 +169,7 @@
 
 
 {% block script %}
-    {% include "include/pagejump/pagejump.html" %}
+{#    {% include "include/pagejump/pagejump.html" %}#}
     {#    {% include "include/pagejump/tabledata.html" %}#}
     <script>
         function Change(dc) {
@@ -197,10 +222,10 @@ function change_host(select_db_name,dc) {
 }
 
 
-function change_group(flag,selected_group,selected_host,dc) {
+function change_group_diff(flag,selected_group,selected_host,dc) {
 
     var host_group = selected_group;
-    if (flag == -1) {
+    if (flag === -1) {
         host_group = $("#id_select_group_"+dc+" option:selected").val();
     }
 {#    console.log(selected_group,selected_host)#}
@@ -223,6 +248,7 @@ function change_group(flag,selected_group,selected_host,dc) {
 
                 var id = value.id;
                 var text = value.ip+":"+value.port+' '+value.explain;
+                console.log(value,key,value)
                 if (id === selected_host){$(select_host).append('<option selected  value ="'+id+'" >'+text+'</option>')}
                 else{$(select_host).append('<option  value ="'+id+'" >'+text+'</option>')}
             })
@@ -231,52 +257,58 @@ function change_group(flag,selected_group,selected_host,dc) {
 }
 
 
-    </script>
+</script>
 <script>
- var select_host_duibi = sessionStorage.getItem("select_host_duibi");
- var select_host_canzhao = sessionStorage.getItem("select_host_canzhao");
- var db_duibi = sessionStorage.getItem("id_db_duibi");
- var tb_duibi = sessionStorage.getItem("id_tb_duibi");
- var db_canzhao = sessionStorage.getItem("id_db_canzhao");
- var tb_canzhao = sessionStorage.getItem("id_tb_canzhao");
+function save_session() {
+    $("#select_host_duibi option:selected").attr('selected','true');
+    $("#select_host_canzhao option:selected").attr('selected','true');
+    $("#id_db_duibi option:selected").attr('selected','true');
+    $("#id_tb_duibi option:selected").attr('selected','true');
+    $("#id_db_canzhao option:selected").attr('selected','true');
+    $("#id_tb_canzhao option:selected").attr('selected','true');
 
-console.log(select_host_duibi)
+    var select_host_duibi = $("#select_host_duibi").html();
+    var select_host_canzhao = $("#select_host_canzhao").html();
+    var db_duibi = $("#id_db_duibi").html();
+    var tb_duibi = $("#id_tb_duibi").html();
+    var db_canzhao = $("#id_db_canzhao").html();
+    var tb_canzhao = $("#id_tb_canzhao").html();
+    var save_data = {};
+    save_data.select_host_duibi = select_host_duibi;
+    save_data.select_host_canzhao= select_host_canzhao;
+    save_data.db_duibi = db_duibi;
+    save_data.tb_duibi = tb_duibi;
+    save_data.db_canzhao = db_canzhao;
+    save_data.tb_canzhao = tb_canzhao;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    var ss = JSON.stringify(save_data)
+    $("#id_save_data").val(ss)
+
+}
 
 </script>
 
     <script>
 
-    change_group(-2,{{ select_group_duibi|default:0 }},{{ select_host_duibi }},'duibi');
-    change_group(-2,{{ select_group_canzhao|default:0 }},{{ select_host_duibi }},'canzhao');
-    change_host(-1,{{ select_host_canzhao|default:0 }},'{{ select_db_canzhao|default:0 }}','canzhao')
-    change_host(-1,{{ select_host_canzhao|default:0 }},'{{ select_db_canzhao|default:0 }}','duibi')
+{#    change_group_diff(-2,{{ select_group_duibi|default:0 }},{{ select_host_duibi }},'duibi');#}
+{#    change_group(-2,{{ select_group_canzhao|default:0 }},{{ select_host_duibi }},'canzhao');#}
+{#    change_host(-1,{{ select_host_canzhao|default:0 }},'{{ select_db_canzhao|default:0 }}','canzhao')#}
+{#    change_host(-1,{{ select_host_canzhao|default:0 }},'{{ select_db_canzhao|default:0 }}','duibi')#}
     </script>
 
-
-{#        <script>#}
-{##}
-{#            $("#menu-toggle").click(function(e) {#}
-{#                e.preventDefault();#}
-{#                $("#wrapper").toggleClass("toggled");#}
-{#            });#}
-{#            function record_cookie() {#}
-{#                var fav = document.getElementById("id_favword");#}
-{#                myfav =escape(fav.value);#}
-{#                myfav = fav.value.replace(/\n/g,"^");#}
-{#                var expires = new Date();#}
-{#                expires.setTime(expires.getTime() + 3500000);#}
-{#                pathstr = ';path=/';#}
-{#                alert(myfav);#}
-{#                document.cookie = "myfavword"+"="+myfav+pathstr+';expires='+expires.toGMTString();#}
-{#            }#}
-{##}
-{#            function showfav() {#}
-{#                var fav = document.getElementById("id_favword");#}
-{#                myfav =unescape(fav.value);#}
-{#                fav.value = myfav;#}
-{#            }#}
-{#        </script>#}
 
     {% endblock %}
 {% endblock %}

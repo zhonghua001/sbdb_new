@@ -2359,6 +2359,10 @@ def mysql_binlog_parse(request):
                 info = "Binlog REDO Parse mission uploaded"
             elif request.POST.has_key('parse_first'):
                 binname_start = request.POST['binary_list_start'].split(' ')[0]
+                begintime = request.POST['begin_time']
+                endtime = request.POST['end_time']
+                tbname = request.POST.get('tblist')
+                dbselected = request.POST.get('dblist')
 
                 if len(request.POST['binary_list_end'])>1:
                     binname_end = request.POST['binary_list_end'].split(' ')[0]
@@ -2501,12 +2505,18 @@ def diff(request):
         if request.POST.get('ins_set_canzhao') is not None else 0
     select_group_canzhao = int(select_group_canzhao)
     select_host_duibi = int(select_host_duibi)
-    select_group_duibi = int(select_group_canzhao)
-    select_host_canzhao = int(select_host_duibi)
+    select_group_duibi = int(select_group_duibi)
+    select_host_canzhao = int(select_host_canzhao)
+
+
     # objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')
     # print result
     if request.method == 'POST':
+        if request.POST.has_key('save_data') :
+
+            save_data = json.loads(request.POST['save_data']) if len(request.POST['save_data']) >10 else 0
+            if save_data == 0:del save_data
         if  request.POST.has_key('check'):
             try:
                 db_account_id_duibi = request.POST['db_duibi'].split('_')[0]

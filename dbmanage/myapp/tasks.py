@@ -113,7 +113,7 @@ def parse_binlogfirst(insname,binname_start,binname_end,countnum):
 def sendmail_sqlparse(user,db,tb,sqllist,flashback):
     mailto=[]
     if flashback==True:
-        title = "BINLOG PARSE (UNDO) FOR "+ db + "." + ('ALL' if tb == '0' else tb)
+        title = "Undo"+ db
     else:
         title = db
     mailto.append(UserInfo.objects.get(username=user).email)

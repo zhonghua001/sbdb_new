@@ -13,7 +13,6 @@
 {%block db_content%}
 
 
-
         <form role="form" method='post'>
             {% csrf_token %}
         <input hidden id="id_t" name="t">
@@ -234,17 +233,26 @@
         </div>
          </div>
         </form >
-<div id="tooltipBlock" style="position: relative; display: none;">sdffds</div>
+
         <div class="col-md-12" >
             {% if info %}
                 <span style="color:red">{{ info }}</span>
             {% endif %}
         </div>
 
-        <div class="col-md-12" style="overflow: auto;max-height: 500px">
 
+
+           <div class="box box-primary col-md-12 no-padding" style="overflow: auto">
+           <div class="box-header with-border">
+                  <h4 class="box-title">Result</h4>
+           </div>
+              <div class="box-body">
 
         <table  class="table table-condensed" border="1">
+        <tr>
+            <th>ID</th>
+            <th  align="center">Data</th>
+        </tr>
             {% for i in sqllist %}
                 <tr>
                     <td>
@@ -257,6 +265,8 @@
             {% endfor %}
         </table>
     </div>
+           </div>
+
 
     {#    <button id="dict"  class="btn btn-success" value="1">test</button >#}
 
@@ -278,25 +288,6 @@
     {#            }#}
     {##}
     {#        </script>#}
-<script>
-    var tip = document.getElementById("tooltipBlock");
-	var selects = document.getElementById("id_binary_start");
-	function tooltip(obj) {
-		var x = selects.offsetLeft, y = obj.offsetTop, h = obj.offsetHeight, w = selects.offsetWidth;
-		/*tip.style.width = w + "px";  （这部分是定义显示提示的块的宽度） */
-		tip.style.marginLeft = x + w + "px";
-		tip.style.marginTop = y - 30 +  "px";
-		tip.style.display = "block";
-		tip.innerHTML = "这部分为程序传递（把数据库里相关国家资料传过来）";
-	}
-	function nodisplay() {
-		tip.style.display = "none";
-	}
-
-</script>
-
-
-
 
 
 <script>
@@ -307,9 +298,6 @@ function load() {
 {#        shade: [0.1, '#fff'] //0.1透明度的白色背景#}
 {#    });#}
 }
-
-
-
 
 function save_t(){
     var selected_table = $("#id_tblist").val();
@@ -428,23 +416,37 @@ var end = {
     minDate:'',
     maxDate:''
 };
+function tip(){
+//小tips
+layer.msg('同上', {
+  icon: 1,
+  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+}, function(){
+  //do something
+});
 
+}
  $("#id_begin_time").jeDate(start);
                $("#id_end_time").jeDate(end);
 
 
 $("#id_binary_start").change(function () {
+
+
     var instance_id = $("#select_host").val();
     var binlog_start = $(this).val();
      $.get("{% url 'get_binlog_datetime' %}",{'instance_id':instance_id,'binlog_start':binlog_start}).done(function (data) {
          console.log(JSON.parse(data).start_time);
          console.log(JSON.parse(data).end_time);
          if (JSON.parse(data).message === 'success' ){
-             layer.tips('我是另外一个tips，只不过我长得跟之前那位稍有些不一样。', '吸附元素选择器', {
-              tips: [1, '#3595CC'],
-              time: 4000
-            });
+
              $(this).title = JSON.parse(data).start_time + '|' +JSON.parse(data).end_time;
+              layer.msg('开始日期：'+ JSON.parse(data).start_time +'<br>'+'结束日期：'+ JSON.parse(data).end_time, {
+              icon: 6,
+              time: 5000 //2秒关闭（如果不配置，默认是3秒）
+            }, function(){
+              //do something
+            });
              start.minDate =  JSON.parse(data).start_time;
              start.maxDate =  JSON.parse(data).end_time;
              end.maxDate = JSON.parse(data).end_time;
@@ -483,13 +485,6 @@ $("#id_binary_start").change(function () {
 ;
 
 
-
-
-
-
-
-
-
 $("#id_binary_end").change(function () {
     var instance_id = $("#select_host").val();
     var binlog_start = $(this).val();
@@ -497,6 +492,12 @@ $("#id_binary_end").change(function () {
          console.log(JSON.parse(data).start_time);
          console.log(JSON.parse(data).end_time);
          if (JSON.parse(data).message === 'success' ){
+              layer.msg('开始日期：'+ JSON.parse(data).start_time +'<br>'+'结束日期：'+ JSON.parse(data).end_time, {
+              icon: 6,
+              time: 5000 //2秒关闭（如果不配置，默认是3秒）
+            }, function(){
+              //do something
+            });
                end.maxDate = JSON.parse(data).end_time;
                $("#id_begin_time").jeDate(start);
                $("#id_end_time").jeDate(end);
