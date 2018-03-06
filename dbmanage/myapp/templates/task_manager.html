@@ -124,8 +124,13 @@ color: red; }
                             <th style="width: 150px"> {{ colname }}</th>
                          {% elif forloop.counter == 13 %}
                             <th style="width: 150px"> {{ colname }}</th>
-                             {% elif forloop.counter == 8 %}
-                            <th style="width: 100px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"> {{ colname }}</th>
+{#                             {% elif forloop.counter == 8 %}#}
+{#                            <th style="width: 180px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"> {{ colname }}</th>#}
+                             {% elif colname == 'sequence' %}
+                        <th style="width: 180px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"> {{ colname }}</th>
+                        {% elif colname == 'task_id' %}
+                        <th style="width: 60px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"> {{ colname }}</th>
+
                          {% elif colname == 'INFOMATION' %}
                         <th style="width: 100px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"> {{ colname }}</th>
                         {% else %}
@@ -608,7 +613,7 @@ $("#myModal").on("shown.bs.modal",function(){
     $(".mysql").click(function(){
         layer.alert($(this).html().replace(/\n/g,"<br>"),
                         {
-                            icon: func_icon(4),
+                            icon: 6,
                             skin: 'layui-layer-lan',//样式类名  自定义样式
                             closeBtn: 1,  // 是否显示关闭按钮
                             anim: 1,//动画类型});,
