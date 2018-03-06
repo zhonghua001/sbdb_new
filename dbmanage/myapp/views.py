@@ -691,7 +691,7 @@ def change_task_period(request):
 
     try:
         taskid = int(request.POST['taskid'])
-        period_date = datetime.datetime.utcfromtimestamp(int(request.POST['period_date'][:-3])).replace(tzinfo=timezone.utc)
+        period_date = datetime.utcfromtimestamp(int(request.POST['period_date'][:-3])).replace(tzinfo=timezone.utc)
         task = Task.objects.get(id=taskid)
         if task.status != 'executed' and task.status != 'running' and task.status != 'NULL':
             # db_account = Db_account.objects.get(instance__ip=task.instance.split(':')[0],instance__port=task.instance.split(':')[1],db_account_role=task.db_account_role)

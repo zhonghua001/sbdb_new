@@ -29,7 +29,7 @@ class BackupHostConf(models.Model):
     backup_server = models.ForeignKey(BackupServer)
     local_backup_dir = models.CharField(max_length=100)
     xtrabackup = models.NullBooleanField(null=True)
-    xtrabackup_conf = models.CharField(max_length=200,null=True)
+    xtrabackup_conf = models.CharField(max_length=8000,null=True)
     xtrabackup_task = models.CharField(max_length=50,null=True)
     mysqldump = models.NullBooleanField(null=True)
     mysqldump_conf = models.CharField(max_length=200,null=True)

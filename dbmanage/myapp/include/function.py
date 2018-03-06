@@ -545,13 +545,17 @@ def log_mysql_op(user,sqltext,mydbname,dbtag,request):
     return 1
 
 def log_mongo_op(sqltext,dbtag,tbname,request):
+
     user = UserInfo.objects.get(username=request.user.username)
     lastlogin = user.last_login
     create_time = timezone.now()
     username = user.username
+    db_account = Db_account.objects.get(id=dbtag.split(':')[0])
+    instance = db_account.instance_id
+    group_id = Host.objects.get(ip=db_account.instance.ip).group_id
     sqltype='select'
     ipaddr = get_client_ip(request)
-    log = Oper_log (user=username,sqltext=sqltext,sqltype=sqltype,login_time=lastlogin,create_time=create_time,dbname=tbname,dbtag=dbtag,ipaddr=ipaddr)
+    log = Oper_log (host_id=instance, group_id=group_id, user=username,sqltext=sqltext,sqltype=sqltype,login_time=lastlogin,create_time=create_time,dbname=tbname,dbtag=dbtag,ipaddr=ipaddr)
     log.save()
     return 1
 

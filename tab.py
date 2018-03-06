@@ -14,7 +14,7 @@ from dbmanage.myapp.models import Db_instance,Db_name,Db_account
 from cmdb.models import Host,HostGroup
 from dbmanage.myapp.include.mon import *
 from dbmanage.myapp.include.scheduled import *
-# a=mon_mysql()
+a=mon_mysql()
 # table_check()
 # # #
 # # #

@@ -398,8 +398,9 @@ function change_group(flag,selected_group,selected_host) {
 
 
 </script>
-
+ {% if data_list %}
     {% include "include/pagejump/pagejump.html" %}
+    {% endif %}
     {#    {% include "include/pagejump/tabledata.html" %}#}
 
     <script>

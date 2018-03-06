@@ -33,10 +33,27 @@ SECRET_KEY = 'n@s)3&f$tu#-^^%k-dj__th2)7m!m*(ag!fs=6ezyzb7l%@i@9'
 #     CELERY_BROKER_URL = 'redis://:{0}@{1}:{2}/{3}'.format(redis_password, redis_host, redis_port, redis_db)
 # else:
 #     CELERY_BROKER_URL = 'redis://{0}:{1}/{2}'.format(redis_host, redis_port, redis_db)
+
+# SECURITY WARNING: don't run with debug turned on in production!
+
+
+
+CELERY_BROKER_URL = 'redis://localhost/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_TASK_SERIALIZER = 'json'
+CELERY_ENABLE_UTC = True
+CELERYD_MAX_TASKS_PER_CHILD = 3
+CELERY_TIMEZONE = 'UTC'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 # SECURITY WARNING: don't run with debug turned on in production!
+
+CELERY_IMPORTS = (
+    'dbmanage.myapp.include.mon',
+)
+
+
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]

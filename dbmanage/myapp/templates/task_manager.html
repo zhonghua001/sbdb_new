@@ -219,8 +219,8 @@ color: red; }
                     <th noWrap style="width: 80px">提交人</th>
                     <th noWrap style="width: 80px">执行人</th>
                     <th style="width: 120px">Instance</th>
-                    <th noWrap style="width: 5px">DB<br>Account<br>Role</th>
-                    <th>DB</th>
+                    <th noWrap style="width: 10px">DB<br>Account<br>Role</th>
+                    <th style="width: 20px">DB</th>
                     <th noWrap style="width: 100px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">SQL语句</th>
                     <th noWrap style="width: 120px">创建时间</th>
                     <th noWrap style="width: 120px">修改时间</th>
@@ -247,7 +247,7 @@ color: red; }
                         <td noWrap>{{ item.id }} <input type="checkbox" size="100" name="choosedlist" value={{ item.id }}>  </td>
                         <td> {{ item.user }}</td>
                         <td>{{ item.operator }}</td>
-                        <td>{{ item.instance }}</td>
+                        <td class="instance">{{ item.instance }}</td>
                         <td>{{ item.db_account_role }}</td>
                         <td> {{ item.dbtag }}</td>
                         <td style="width: 100px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"> {{ item.sqltext }}</td>
@@ -356,7 +356,8 @@ color: red; }
 
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="commit_period btn btn-default text-left">Commit</button>
+
+                               <button type="button" class="commit_period btn btn-default text-left">Commit</button>
 
                                     <button type="button" id='id_close' class="btn btn-default" data-dismiss="modal">Close</button>
 
@@ -537,78 +538,87 @@ function change_group(flag,selected_group,selected_host) {
         });
     </script>
 
-    <script>
-{#            jeDate({#}
-{#                dateCell:".period_date",#}
-{#                format:"YYYY-MM-DD hh:mm:ss",#}
-{#                isinitVal:true,#}
-{#                isTime:true, //isClear:false,#}
-{#                minDate:"2014-09-19 00:00:00",#}
-{#                okfun:function(val){alert(val)}#}
-{#                    });#}
+<script>
 
 
-        $(document).ready(function(){
-            $('#myModal').modal({
-                keyboard: false,
-                show: false,
-                backdrop:false
-            })
-            $(document).on("click",'.backup_sql', function() {
-                {#            $('.backup_sql').on('click',function() {#}
-                var sequenceid = $(this).attr("value");
-                {#                alert(sequenceid);#}
-                $.get("{% url 'get_single_rollback' %}",{'sequenceid':sequenceid}).done(function (data) {
-                    $('#myModal').modal({
-                        show: true
-                    });
-                    $("#myTb").empty("");
-                    var tbHead = " <thead><tr><th width=\"5%\">ID</th><th width=\"95%;\">SQL</th></tr></thead><tbody>";
-                    $("#myTb").append(tbHead);
-                    for (var i =0 ; i <= data.length - 1; i++) {
-                        var tbBody = ""
-                        tbBody += "<tr><td>"+(i+1)+"</td><td style=\"word-wrap:break-word;\">" + data[i] +  "</td></tr>";
-                        $("#myTb").append(tbBody);
+$(document).ready(function(){
+$('#myModal').modal({
+    keyboard: false,
+    show: false,
+    backdrop:false
+});
 
-                        {#                        $('#list_result').append(' ' + data[i]);#}
-                    };
-                    $("#myTb").append("</tbody>");
-                    $('#myTb').dataTable().fnDestroy();
-                    $('#myTb').DataTable({
-                        "lengthMenu": [[5,10], [5,10]],
-                        "order": []
-                    });
+$(document).on("click",'.backup_sql', function() {
+    {#            $('.backup_sql').on('click',function() {#}
+    var sequenceid = $(this).attr("value");
+    {#                alert(sequenceid);#}
+    $.get("{% url 'get_single_rollback' %}",{'sequenceid':sequenceid}).done(function (data) {
+        $('#myModal').modal({
+            show: true
+        });
+        $("#myTb").empty("");
+        var tbHead = " <thead><tr><th width=\"5%\">ID</th><th width=\"95%;\">SQL</th></tr></thead><tbody>";
+        $("#myTb").append(tbHead);
+        for (var i =0 ; i <= data.length - 1; i++) {
+            var tbBody = "";
+            tbBody += "<tr><td >"+(i+1)+"</td><td class='mysql' style=\"word-wrap:break-word;\">" + data[i] +  "</td></tr>";
+            $("#myTb").append(tbBody);
 
-                });
-            });
-
-            $('.backup_info').click(function(){
-                var taskid = $(this).attr("value");
-                $.get("{% url 'get_rollback' %}",{'taskid':taskid}).done(function (data) {
-                    $('#myModal').modal({
-                        show: true
-                    });
-                    $("#myTb").empty("");
-
-                    var tbHead = "<thead><tr><th width=\"5%\">ID</th><th width=\"95%\">SQL</th></tr></thead><tbody>";
-                    $("#myTb").append(tbHead);
-{#                    $("#myTb").children().style('width','95%')#}
-                    for (var i =0 ; i <= data.length - 1; i++) {
-                        var tbBody = ""
-                        tbBody += "<tr><td width=\"30\">"+(i+1)+"</td><td>" + data[i] +  "</td></tr>";
-                        $("#myTb").append(tbBody);
-
-                        $('#list_result').append(' ' + data[i]);
-                    };
-                    $("#myTb").append("</tbody>");
-                    $('#myTb').dataTable().fnDestroy();
-                    $('#myTb').DataTable();
-                });
-                return false;
-            });
+            {#                        $('#list_result').append(' ' + data[i]);#}
+        };
+        $("#myTb").append("</tbody>");
+        $('#myTb').dataTable().fnDestroy();
+        $('#myTb').DataTable({
+            "lengthMenu": [[5,10], [5,10]],
+            "order": []
         });
 
+    });
+});
 
+
+
+    $('.backup_info').click(function(){
+        var taskid = $(this).attr("value");
+        $.get("{% url 'get_rollback' %}",{'taskid':taskid}).done(function (data) {
+            $('#myModal').modal({
+                show: true
+            });
+            $("#myTb").empty("");
+
+            var tbHead = "<thead><tr><th width=\"5%\">ID</th><th width=\"95%\">SQL</th></tr></thead><tbody>";
+            $("#myTb").append(tbHead);
+{#                    $("#myTb").children().style('width','95%')#}
+            for (var i =0 ; i <= data.length - 1; i++) {
+                var tbBody = ""
+                tbBody += "<tr><td width=\"30\">"+(i+1)+"</td><td class=\"mysql\">" + data[i] +  "</td></tr>";
+                $("#myTb").append(tbBody);
+
+                $('#list_result').append(' ' + data[i]);
+            };
+            $("#myTb").append("</tbody>");
+            $('#myTb').dataTable().fnDestroy();
+            $('#myTb').DataTable();
+        });
+        return false;
+    });
+});
+
+$("#myModal").on("shown.bs.modal",function(){
+    $(".mysql").click(function(){
+        layer.alert($(this).html().replace(/\n/g,"<br>"),
+                        {
+                            icon: func_icon(4),
+                            skin: 'layui-layer-lan',//样式类名  自定义样式
+                            closeBtn: 1,  // 是否显示关闭按钮
+                            anim: 1,//动画类型});,
+                            area: ['600px', '400px']
+                        })
+        })
+{#        alert($(this).html())#}
+    })
+
+//在模态框完全展示出来做一些动作
 
 
     </script>
