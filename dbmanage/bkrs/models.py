@@ -57,6 +57,7 @@ class BackupLog(models.Model):
     finish_date = models.CharField(max_length=50,null=True)
     master_log_file = models.CharField(max_length=50,null=True)
     master_log_pos = models.CharField(max_length=30,null=True)
+    change_master_to = models.CharField(max_length=200,null=True)
     binlog_min_datetime = models.CharField(max_length=50,null=True)
     binlog_max_datetime = models.CharField(max_length=50, null=True)
     binlog_min_pos = models.CharField(max_length=50, null=True)

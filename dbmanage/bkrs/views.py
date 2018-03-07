@@ -631,6 +631,7 @@ def received_backup_info(request):
                                           start_date=begin_backup_time, finish_date=end_backup_time,
                                           master_log_file=change_master_to.split(' ')[4].split('=')[1].split(',')[0],
                                           master_log_pos=change_master_to.split(' ')[5].split('=')[1].split(';')[0],
+                                          change_master_to = change_master_to,
                                           backup_local_path=backup_path, backup_files=backup_file,
                                           is_tar=1, local_tar_file=backup_path+backup_file, status=backup_status,
                                           local_tar_file_md5=md5, backup_files_size=size, command=command,
@@ -764,4 +765,5 @@ def received_backup_info(request):
                 return HttpResponse("Your push have errors, Please Check your data!")
 
 
-
+def crontab_edit(request,):
+    return render(request,'bkrs/crontab_edit.html',locals())

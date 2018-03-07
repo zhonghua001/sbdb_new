@@ -1,5 +1,2 @@
-def inc(x,f,e,y=1):
-    print x,y,e,f
-
-inc(32,2,3,4)
-
+with open('f','a+') as f:
+    f.writelines('\n'+'aaaa')

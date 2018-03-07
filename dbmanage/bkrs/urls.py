@@ -14,5 +14,7 @@ urlpatterns = [
     url(r'^set_config/$', views.index, name='set_config'),
     url(r'^backfailed/$', views.failed_customer, name='backfailed'),
     url(r'^backup_statics/$', views.backup_statics, name='backup_statics'),
+    url(r'^crontab_edit/(\d+)$', views.crontab_edit, name='crontab_edit'),
+
     url(r'^help/$', views.help, name='help'),
 ]

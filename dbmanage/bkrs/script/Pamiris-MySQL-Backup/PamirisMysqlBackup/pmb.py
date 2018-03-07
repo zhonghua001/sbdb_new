@@ -25,32 +25,30 @@ result = {}
 result['instance_id'] = instance_id
 result['token'] = token
 
+config = ConfigParser.RawConfigParser()
+config_file = '%s/config.cfg' % (os.path.abspath(os.path.dirname(__file__)))
+config.read(config_file)
+
+# configure the logger
+logger = logging.getLogger("PMB LOG")
+logger.setLevel(logging.DEBUG)
+fileHandler = logging.FileHandler(config.get('Logging', 'log_path'))
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fileHandler.setFormatter(formatter)
+logger.addHandler(fileHandler)
+quiet = False
+manual = False
+
+
 
 def main():
     """main method for parsing the command line options and what happens after that"""
     # options, args and config all need to be global so they can be used in other methods
     parameter = ['backup','--incremental','--all-databases','--manual']
-
     global options, args, config, logger, quiet, manual
-
-
     # quiet tells the application to not print it's current status to stdout. It just
     # logs instead.
-    quiet = False
-    manual = False
-
     # open the config file and parse it
-    config = ConfigParser.RawConfigParser()
-    config_file = '%s/config.cfg' % (os.path.abspath(os.path.dirname(__file__)))
-    config.read(config_file)
-
-    # configure the logger
-    logger = logging.getLogger("PMB LOG")
-    logger.setLevel(logging.DEBUG)
-    fileHandler = logging.FileHandler(config.get('Logging', 'log_path'))
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    fileHandler.setFormatter(formatter)
-    logger.addHandler(fileHandler)
 
     # list of available options
     available = ['backup', 'restore', 'fetch']
@@ -133,51 +131,59 @@ def post_data(url, data):
         r = requests.post(url, data)
         if r.text:
             logAndPrint(r.text,'info',True,False)
-            return True
+            return 1
             # print r.text
         else:
             logAndPrint("Server return http status code: {0}".format(r.status_code), 'error',True, False)
-            return False
+            return 0
     except StandardError as msg:
-        if r.status_code <> 200:
-            with open(os.path.dirname(__file__)+'/PostError.cache','a+') as f:
-                f.write(data)
+
+        with open(os.path.dirname(__file__)+'/PostError.cache','ab+') as f:
+            f.writelines(data+'\n')
         logAndPrint(msg,'error',True,False)
+        return -1
 
 
 
 def _post_failed():
     os.chdir(os.path.dirname(__file__))
     if os.path.isfile('PostError.cache' ):
-        os.system('cp PostError.cache PostError.cache.1')
-        with open('PostError.cache.1','r') as f:
+        os.system('mv PostError.cache PostError.cache.1')
+        with open('PostError.cache.1','rb') as f:
             for r in f.readlines():
                 try:
-                    push_data(json.loads(r))
+                    if len(r)>0:
+                        push_data(json.loads(r))
                     continue
                 except Exception,e:
                     print e
                     print r
-                    with open('PostError.cache.tmp', 'a+') as f_t:
-                        f_t.write(r)
+                    if result == 0:
+                        with open('PostError.cache.tmp', 'ab+') as f_t:
+                            f_t.writelines(json.dumps(json.loads((r+'\n'))))
         if os.path.isfile('PostError.cache.tmp'):
-            os.system('rm -f PostError.cache')
             os.system('rm -f PostError.cache.1')
-            os.system('mv PostError.cache.tmp PostError.cache')
+            with open('PostError.cache.tmp', 'ab+') as f_t:
+                with open('PostError.cache', 'ab+') as f:
+                    for r in f_t.readline():
+                        f.writelines(json.dumps(json.loads((r+'\n'))))
+            os.system('rm -f PostError.cache.tmp')
+
         else:
-            os.system('rm -f PostError.cache')
             os.system('rm -f PostError.cache.1')
 
 
 
 def push_data(backup_info):
+
     print backup_info
 
     json_data = json.dumps(backup_info)
 
-    post_data("http://{0}/dbmanage/backup_manage/received/backup_info/".format(server_ip), json_data)
+    result = post_data("http://{0}/dbmanage/backup_manage/received/backup_info/".format(server_ip), json_data)
     print '----------------------------------------------------------'
-    return True
+    return result
+
 
 
 
@@ -695,7 +701,6 @@ def _backup_incremental():
         test_file = '%s_%s*' % (file_prefix, date)
 
 
-
         try:
             _mkdir(binlog_path)
             os.chdir(binlog_path)
@@ -733,9 +738,6 @@ def _backup_incremental():
             if t_line not in [x.split(' ')[0] for x in binlog_backuped]:
                 binlog_not_backup.append(t_line)
 
-
-
-
         #flush the logs, update bin_log_info and copy the binary log files over
         logAndPrint('Flushing binary logs...', 'info')
         _exec_command('mysql -h%s -P%s -u%s --password=%s -e "flush logs;"' %
@@ -743,7 +745,6 @@ def _backup_incremental():
                 ,conf['user'],conf['password']))
         # change directories
         inc_path = os.path.dirname(binlog_path)
-
 
         try:
             _mkdir(inc_path)

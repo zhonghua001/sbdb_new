@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+
+    <title>Crontab UI made by AngularJS</title>
+    <style>
+        html, body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        select.form-control {
+            display: inline-block;
+            width: auto;
+        }
+    </style>
+</head>
+<body ng-controller="CrontabController">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Create crontab expression(made by AngularJS)</h4>
+        </div>
+        <div class="modal-body">
+            <div class="form-group clearfix">
+                <div class="text-center">
+                    <button class="btn btn-success" type="button" ng-click="cron.reset()">Reset</button>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <label style="font-size: 2em;">
+                    {{cron.min.getExpression()}}&nbsp;&nbsp;&nbsp;{{cron.hour.getExpression()}}&nbsp;&nbsp;&nbsp;
+                    {{cron.dayM.getExpression()}}&nbsp;&nbsp;&nbsp;{{cron.month.getExpression()}}&nbsp;&nbsp;&nbsp;{{cron.dayW.getExpression()}}
+                </label>
+            </div>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+
+                                                   aria-expanded="false" aria-controls="collapseOne"> Minute </a></h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
+                         aria-labelledby="headingOne">
+                        <div class="panel-body">
+                            <p class="text-warning"> You are not allowed to change this section. </p>
+
+                            <div class="radio">
+                                <label style="margin-right: 20px;">
+                                    <input type="radio" value="every" ng-model="cron.min.type" ng-disabled="true">
+                                    Every </label>
+                                <label>
+                                    <input type="radio" value="everyN" ng-model="cron.min.type" ng-disabled="true">
+                                    Every N minutes </label>
+                                <label>
+                                    <input type="radio" value="each" ng-model="cron.min.type" ng-disabled="true">
+                                    Each selected minute </label>
+                            </div>
+                            <div class="form-group" ng-show="cron.min.type == 'every'">
+                                <label>*</label>
+                            </div>
+                            <div class="form-group" ng-show="cron.min.type == 'everyN'">
+                                <label>Every</label>
+                                <select ng-model="cron.min.n" class="form-control">
+                                    <option value="">Please select</option>
+                                    <option ng-repeat="index in cron.min.range" value="{{index}}">{{index}}</option>
+                                </select>
+                                minutes
+                            </div>
+                            <div ng-show="cron.min.type == 'each'">
+                                <div class="form-group" ng-show="cron.min.labelList.length > 0">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-success" title="Click to remove"
+
+                                                ng-click="cron.min.removeSelected(col)"
+
+                                                ng-repeat="col in cron.min.labelList" ng-disabled="true">
+                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                </div>
+                                <div class="form-group hide">
+                                    <select ng-change="cron.min.appendSelected()" ng-model="cron.min.each"
+                                            class="form-control">
+                                        <option value="">Please select</option>
+                                        <option ng-repeat="index in cron.min.range" value="{{index}}">{{index}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                        <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion"
+
+                                                   href="#collapseHour" aria-expanded="true"
+                                                   aria-controls="collapseHour"> Hour </a>
+                        </h4>
+                    </div>
+                    <div id="collapseHour" class="panel-collapse collapse" role="tabpanel"
+
+                         aria-labelledby="headingTwo">
+                        <div class="panel-body">
+                            <div class="radio">
+                                <label style="margin-right: 20px;">
+                                    <input type="radio" value="every" ng-model="cron.hour.type">
+                                    Every </label>
+                                <label>
+                                    <input type="radio" value="everyN" ng-model="cron.hour.type">
+                                    Every N hours </label>
+                                <label>
+                                    <input type="radio" value="each" ng-model="cron.hour.type">
+                                    Each selected hour </label>
+                            </div>
+                            <div class="form-group" ng-show="cron.hour.type == 'every'">
+                                <label>*</label>
+                            </div>
+                            <div class="form-group" ng-show="cron.hour.type == 'everyN'">
+                                <label>Every</label>
+                                <select ng-model="cron.hour.n" class="form-control">
+                                    <option value="">Please select</option>
+                                    <option ng-repeat="index in cron.hour.range" value="{{index}}">{{index}}</option>
+                                </select>
+                                hours
+                            </div>
+                            <div ng-show="cron.hour.type == 'each'">
+                                <div class="form-group" ng-show="cron.hour.labelList.length > 0">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-success" title="Click to remove"
+
+                                                ng-click="cron.hour.removeSelected(col)"
+
+                                                ng-repeat="col in cron.hour.labelList">
+                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select ng-change="cron.hour.appendSelected()" ng-model="cron.hour.each"
+                                            class="form-control">
+                                        <option value="">Please select</option>
+                                        <option ng-repeat="index in cron.hour.range" value="{{index}}">{{index}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading3">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Day of month
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+
+                         aria-labelledby="heading3">
+                        <div class="panel-body">
+                            <div class="radio">
+                                <label style="margin-right: 20px;">
+                                    <input type="radio" value="every" ng-model="cron.dayM.type">
+                                    Every day </label>
+                                <label>
+                                    <input type="radio" value="each" ng-model="cron.dayM.type">
+                                    Each selected day </label>
+                            </div>
+                            <div class="form-group" ng-show="cron.dayM.type == 'every'">
+                                <label>*</label>
+                            </div>
+                            <div ng-show="cron.dayM.type == 'each'">
+                                <div class="form-group" ng-show="cron.dayM.labelList.length > 0">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-success" title="Click to remove"
+                                                ng-click="cron.dayM.removeSelected(col)"
+                                                ng-repeat="col in cron.dayM.labelList">
+                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select ng-change="cron.dayM.appendSelected()" ng-model="cron.dayM.each"
+                                            class="form-control">
+                                        <option value="">Please select</option>
+                                        <option ng-repeat="index in cron.dayM.range" value="{{index}}">{{index}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading4">
+                        <h4 class="panel-title"><a class="collapsed" data-toggle="collapse" data-parent="#accordion"
+                                                   href="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                            Month </a></h4>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="heading4">
+                        <div class="panel-body">
+                            <div class="radio">
+                                <label style="margin-right: 20px;">
+                                    <input type="radio" value="every" ng-model="cron.month.type">
+                                    Every month </label>
+                                <label>
+                                    <input type="radio" value="each" ng-model="cron.month.type">
+                                    Each selected month </label>
+                            </div>
+                            <div class="form-group" ng-show="cron.month.type == 'every'">
+                                <label>*</label>
+                            </div>
+                            <div ng-show="cron.month.type == 'each'">
+                                <div class="form-group" ng-show="cron.month.labelList.length > 0">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-success" title="Click to remove"
+                                                ng-click="cron.month.removeSelected(col)"
+                                                ng-repeat="col in cron.month.labelList">
+                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select ng-change="cron.month.appendSelected()" ng-model="cron.month.each"
+                                            class="form-control">
+                                        <option value="">Please select</option>
+                                        <option ng-repeat="index in cron.month.range" value="{{index}}">{{index}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading5">
+                        <h4 class="panel-title"><a class="collapsed" data-toggle="collapse" data-parent="#accordion"
+                                                   href="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                            Day of week </a>
+                        </h4>
+                    </div>
+                    <div id="collapse5" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="heading5">
+                        <div class="panel-body">
+                            <div class="radio">
+                                <label style="margin-right: 20px;">
+                                    <input type="radio" value="every" ng-model="cron.dayW.type">
+                                    Every day of week </label>
+                                <label>
+                                    <input type="radio" value="each" ng-model="cron.dayW.type">
+                                    Each selected day of week </label>
+                            </div>
+                            <div class="form-group" ng-show="cron.dayW.type == 'every'">
+                                <label>*</label>
+                            </div>
+                            <div ng-show="cron.dayW.type == 'each'">
+                                <div class="form-group" ng-show="cron.dayW.labelList.length > 0">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-success" title="Click to remove"
+                                                ng-click="cron.dayW.removeSelected(col)"
+                                                ng-repeat="col in cron.dayW.labelList">
+                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select ng-change="cron.dayW.appendSelected()" ng-model="cron.dayW.each"
+                                            class="form-control">
+                                        <option value="">Please select</option>
+                                        <option ng-repeat="index in cron.dayW.range" value="{{index}}"> {{index}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/angular.min.js"></script>
+<script src="js/crontab.js"></script>
+</body>
+</html>
