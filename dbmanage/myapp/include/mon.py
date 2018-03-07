@@ -159,18 +159,6 @@ def backup_statistics():
     except:
         pass
 
-
-
-
-
-
-
-
-
-
-
-
-
 @shared_task()
 def sendmail_monitor(instance_id,mailto,data,alarm_type):
     instance = Db_instance.objects.get(id=instance_id)
@@ -217,8 +205,9 @@ def mon_mysql():
             print i.tag,datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 @shared_task()
-def test(x,y):
-    return x*y
+def test():
+    time.sleep(120)
+    print datetime.datetime.now()
 
 @shared_task
 def check_mysql_host(instance_id,account_id):
