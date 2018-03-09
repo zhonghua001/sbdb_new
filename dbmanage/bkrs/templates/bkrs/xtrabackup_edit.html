@@ -21,21 +21,21 @@
                   <label for="mysql" class="col-sm-2 control-label" >mysql:</label>
 
                   <div class="col-sm-9">
-                      <input class="form-control"class="form-control" type="text" value="{{ mysql }}" id="mysql" name="mysql" placeholder='/usr/bin/mysql' >
+                      <input class="form-control"class="form-control" type="text" value="{{ mysql|default:'/usr/bin/mysql' }}" id="mysql" name="mysql" placeholder='/usr/bin/mysql' >
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="mycnf" class="col-sm-2 control-label">mycnf:</label>
 
                   <div class="col-sm-9">
-                      <input class="form-control"type="text" value="{{ mycnf }}" id="mycnf" name="mycnf" placeholder='/etc/my.cnf' >
+                      <input class="form-control"type="text" value="{{ mycnf|default:'/etc/my.cnf' }}" id="mycnf" name="mycnf" placeholder='/etc/my.cnf' >
                   </div>
                 </div>
                 <div class="form-group" >
                   <label for="mysqladmin" class="col-sm-2 control-label">mysqladmin:</label>
 
                   <div class="col-sm-9" >
-                    <input class="form-control"type="text" value="{{ mysqladmin }}" id="mysqladmin" name="mysqladmin" placeholder='/usr/bin/mysqladmin'  >
+                    <input class="form-control"type="text" value="{{ mysqladmin|default:'/usr/bin/mysqladmin' }}" id="mysqladmin" name="mysqladmin" placeholder='/usr/bin/mysqladmin'  >
                   </div>
                 </div>
 {#                <div class="form-group">#}
@@ -58,7 +58,7 @@
                   <label for="mysql_socket" class="col-sm-2 control-label">mysql_socket:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ mysql_socket }}" placeholder="/tmp/mysql.sock" id="mysql_socket" name="mysql_socket" >
+                    <input class="form-control"type="text" value="{{ mysql_socket|default:'/tmp/mysql.sock' }}" placeholder="/tmp/mysql.sock" id="mysql_socket" name="mysql_socket" >
                   </div>
                 </div>
 
@@ -82,7 +82,7 @@
                   <label for="datadir" class="col-sm-2 control-label">datadir:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ datadir }}" id="datadir" name="datadir" placeholder='/mydata/data' >
+                    <input class="form-control"type="text" value="{{ datadir|default:'/mydata/data' }}" id="datadir" name="datadir" placeholder='/mydata/data' >
                   </div>
                 </div>
 
@@ -91,7 +91,7 @@
                 <div class="form-group">
                   <label for="pid_dir" class="col-sm-2 control-label">pid_dir:</label>
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ pid_dir }}" id="pid_dir" name="pid_dir" placeholder='/tmp/MySQL-AutoXtraBackupset #Pid directory'  >
+                    <input class="form-control"type="text" value="{{ pid_dir|default:'/tmp/MySQL-AutoXtraBackupset' }}" id="pid_dir" name="pid_dir" placeholder='/tmp/MySQL-AutoXtraBackupset #Pid directory'  >
                   </div>
                 </div>
 
@@ -99,7 +99,7 @@
                   <label for="tmpdir" class="col-sm-2 control-label">tmpdir:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ tmpdir }}" id="tmpdir" name="tmpdir" placeholder='/tmp/ #Tempdir of backup,set a large space' >
+                    <input class="form-control"type="text" value="{{ tmpdir|default:'/tmp/' }}" id="tmpdir" name="tmpdir" placeholder='/tmp/ #Tempdir of backup,set a large space' >
                   </div>
                 </div>
 
@@ -107,7 +107,7 @@
                   <label for="pid_runtime_warning" class="col-sm-2 control-label">pid_runtime_warning:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ pid_runtime_warning }}" id="pid_runtime_warning"  placeholder='2 #Optional: set warning if pid of backup us running for longer than X' name="pid_runtime_warning" >
+                    <input class="form-control"type="text" value="{{ pid_runtime_warning|default:'2' }}" id="pid_runtime_warning"  placeholder='2 #Optional: set warning if pid of backup us running for longer than X' name="pid_runtime_warning" >
                   </div>
                 </div>
 
@@ -115,21 +115,33 @@
                   <label for="backupdir" class="col-sm-2 control-label">backupdir:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ backupdir }}" id="backupdir" name="backupdir" placeholder="/backup/xtrabackup/ #">
+                    <input class="form-control"type="text" value="{{ backupdir|default:'/backup/xtrabackup/' }}" id="backupdir" name="backupdir" placeholder="/backup/xtrabackup/ #">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="backup_tool" class="col-sm-2 control-label">backup_tool:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ backup_tool }}" id="backup_tool" name="backup_tool" placeholder="/usr/bin/xtrabacup" >
+                    <input class="form-control"type="text" value="{{ backup_tool|default:'/usr/bin/xtrabacup' }}" id="backup_tool" name="backup_tool" placeholder="/usr/bin/xtrabacup" >
                   </div>
                     </div>
                 <div class="form-group">
                   <label for="prepare_tool" class="col-sm-2 control-label">prepare_tool:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ prepare_tool }}" id="prepare_tool" name="prepare_tool" placeholder="#Optional: specify different path/version of xtrabackup here for prepare">
+                       <select class="select form-control" >
+                          {% if prepare_tool is not None %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
+                          {% else %}
+                                <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+
+                    <input class="form-control {% if prepare_tool is not None %}{% else %} hidden{% endif %}" type="text" {% if prepare_tool is not None %}{% else %}disabled {% endif %}
+                           value="{{ prepare_tool|default:'' }}" id="prepare_tool" name="prepare_tool"
+                           placeholder="#Optional: specify different path/version of xtrabackup here for prepare">
                   </div>
                 </div>
 
@@ -137,7 +149,8 @@
                   <label for="xtra_prepare" class="col-sm-2 control-label">xtra_prepare:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xtra_prepare }}" id="xtra_prepare" name="xtra_prepare" placeholder="--apply-log-only" disabled>
+                    <input class="form-control"type="text" value="{{ xtra_prepare|default:'--apply-log-only' }}"
+                           id="xtra_prepare" name="xtra_prepare" placeholder="--apply-log-only" readonly>
                   </div>
                 </div>
 
@@ -145,7 +158,15 @@
                   <label for="xtra_backup" class="col-sm-2 control-label">xtra_backup:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xtra_backup }}" id="xtra_backup" name="xtra_backup" placeholder="--compact #Optional: pass additional options for backup stage" disabled>
+                      <select class="select form-control" name="xtra_backup" >
+                          {% if xtra_options == '--compact' %}
+                              <option value="0" >Disabled</option>
+                              <option selected value="--compact">--compact #Optional: pass additional options for backup stage</option>
+                          {% else %}
+                              <option selected value="0" >Disabled</option>
+                              <option value="--compact" >--compact [#Optional: pass additional options for backup stage]</option>
+                          {% endif %}
+                      </select>
                   </div>
                 </div>
 
@@ -153,25 +174,35 @@
                   <label for="xtra_prepare_options" class="col-sm-2 control-label">xtra_prepare_options:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xtra_prepare_options }}" id="xtra_prepare_options" name="xtra_prepare_options" placeholder="--rebuild-indexes #Optional: pass additional options for prepare stage" disabled>
+                      <select class="select form-control" name="xtra_prepare_options" >
+                          {% if xtra_prepare_options == '--rebuild-indexes' %}
+                              <option value="0" >Disabled</option>
+                              <option selected value="--compact">--rebuild-indexes [#Optional: pass additional options for prepare stage]</option>
+                          {% else %}
+                              <option selected value="0" >Disabled</option>
+                              <option value="--compact" >--rebuild-indexes [#Optional: pass additional options for prepare stage]</option>
+                          {% endif %}
+                      </select>
                   </div>
                 </div>
 
 
                 <div class="form-group">
-                  <label for="prepare_tool" class="col-sm-2 control-label">xtra_options:</label>
+                  <label for="xtra_options" class="col-sm-2 control-label">xtra_options:</label>
 
                   <div class="col-sm-9">
-                      <select class="select form-control" >
+                      <select class="select form-control" name="xtra_options">
                           {% if xtra_options == '--binlog-info=ON --galera-info' %}
-                          <option title="Optional: pass general additional options; it will go to both for backup and prepare" value="{{ xtra_options }}" selected>{{ xtra_options }}</option>
+                          <option title="Optional: pass general additional options; it will go to both for backup and prepare"
+                                  value="{{ xtra_options }}" selected>{{ xtra_options }}</option>
                           <option value="--no-version-check">--no-version-check</option>
                           {% else %}
-                          <option title="Optional: pass general additional options; it will go to both for backup and prepare" value="'--binlog-info=ON --galera-info'" selected>--binlog-info=ON --galera-info</option>
+                          <option title="Optional: pass general additional options; it will go to both for backup and prepare"
+                                  value="'--binlog-info=ON --galera-info'" selected>--binlog-info=ON --galera-info</option>
                           <option value="--no-version-check" selected>--no-version-check</option>
                           {% endif %}
                       </select>
-                                   </div>
+                   </div>
                 </div>
 
 
@@ -179,8 +210,19 @@
                   <label for="archive_dir" class="col-sm-2 control-label">archive_dir:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ archive_dir }}" id="archive_dir" name="archive_dir"
-                        placeholder="/backup/xtrabackup/archived #Optional: set archive and rotation">
+                      <select class="select form-control" >
+                          {% if archive_dir is not None %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
+                          {% else %}
+                                <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+
+                    <input class="form-control {% if archive_dir is None %} hidden{% endif %}" type="text" {% if archive_dir is None %}disabled hidden{% endif %}
+                           value="{{ archive_dir|default:'' }}" id="archive_dir" name="archive_dir"
+                           placeholder="/backup/xtrabackup/archived #Optional: set archive and rotation">
                   </div>
                 </div>
 
@@ -189,7 +231,19 @@
                   <label for="full_backup_interval" class="col-sm-2 control-label">full_backup_interval:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ full_backup_interval }}" id="full_backup_interval" name="full_backup_interval" placeholder="1 #full_backup_interval=1 day">
+                      <select class="select form-control" >
+                          {% if archive_dir is not None %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
+                          {% else %}
+                                <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+
+                    <input class="form-control {% if full_backup_interval is None %} hidden{% endif %}" type="text" {% if full_backup_interval is None %}disabled{% endif %}
+                           value="{{ full_backup_interval|default:'' }}" id="full_backup_interval" name="full_backup_interval"
+                           placeholder="1 #full_backup_interval=1 day">
                   </div>
                 </div>
 
@@ -198,7 +252,20 @@
                   <label for="max_archive_size" class="col-sm-2 control-label">max_archive_size:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ max_archive_size }}" id="max_archive_size" name="max_archive_size" placeholder="100GiB #max_archive_size=100GiB">
+                      <select class="select form-control" >
+                          {% if archive_dir is not None %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
+                          {% else %}
+                                <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+
+                    <input class="form-control {% if max_archive_size is None %} hidden{% endif %}"
+                           type="text" {% if max_archive_size is None %}disabled {% endif %}
+                           value="{{ max_archive_size|default:'' }}" id="max_archive_size" name="max_archive_size"
+                           placeholder="100GiB #max_archive_size=100GiB">
                   </div>
                 </div>
 
@@ -206,7 +273,20 @@
                   <label for="max_archive_duration" class="col-sm-2 control-label">max_archive_duration:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ max_archive_duration }}" id="max_archive_duration" name="max_archive_duration" placeholder="4 Days #max_archive_duration=4 Days">
+                      <select class="select form-control" >
+                          {% if archive_dir is not None %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
+                          {% else %}
+                                <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+
+                    <input class="form-control {% if max_archive_duration is None %} hidden{% endif %}"
+                           type="text" {% if max_archive_duration is None %}disabled {% endif %}
+                           value="{{ max_archive_duration|default:'' }}" id="max_archive_duration" name="max_archive_duration"
+                           placeholder="4 Days #max_archive_duration=4 Days">
                   </div>
                 </div>
 
@@ -214,11 +294,43 @@
                   <label for="partial_list" class="col-sm-2 control-label">partial_list:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ partial_list }}" id="partial_list" name="partial_list" placeholder="test.t1 test.t2 dbtest  #Optional WARNING(Enable this if you want to take partial backups). Specify database names or table names.">
+                       <select class="select form-control" >
+                          {% if archive_dir is not None %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
+                          {% else %}
+                                <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+
+                    <input  class="form-control {% if partial_list is None %} hidden{% endif %}"
+                            type="text" {% if partial_list is None %} disabled {% endif %}
+                           value="{{ partial_list|default:'' }}" id="partial_list" name="partial_list"
+                           placeholder="test.t1 test.t2 dbtest  #Optional WARNING(Enable this if you want to take partial backups).
+                           Specify database names or table names.">
+
+
                   </div>
                 </div>
                     <hr>
                   <p><b style="margin-left: 5px">[Compress]</b></p>
+                 <div class="form-group">
+
+                  <label for="compress_enable" class="col-sm-2 control-label">Enable:</label>
+
+                  <div class="col-sm-9">
+                      <select class="select form-control" id="compress_enable" name="compress_enable" >
+                          {% if ecrypt_enable == 1 %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disable</option>
+                          {% else %}
+                              <option value="1">Enable</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+                  </div>
+                </div>
                 <div class="form-group">
                   <label for="compress" class="col-sm-2 control-label">compress:</label>
 
@@ -263,11 +375,11 @@
                   <div class="col-sm-9">
                       <select class="select form-control" id="Enable" name="encrpyt_enable" >
                           {% if ecrypt_enable == 1 %}
-                              <option value="1" selected>Enable</option>
-                              <option value="0">Disable</option>
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
                           {% else %}
-                              <option value="1">Enable</option>
-                              <option value="0" selected>Disable</option>
+                              <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
                           {% endif %}
                       </select>
                   </div>
@@ -347,11 +459,11 @@
                   <div class="col-sm-9">
                       <select class="select form-control" id="xbstream_enable" name="xbstream_enable" >
                           {% if ecrypt_enable == 1 %}
-                              <option value="1" selected>Enable</option>
-                              <option value="0">Disable</option>
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
                           {% else %}
-                              <option value="1">Enable</option>
-                              <option value="0" selected>Disable</option>
+                              <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
                           {% endif %}
                       </select>
                   </div>
@@ -368,7 +480,20 @@
                   <label for="stream" class="col-sm-2 control-label">stream:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ stream }}" id="stream" name="stream" placeholder="xbstream" >
+                      <select class="select form-control" >
+                          {% if stream is not None %}
+                              <option value="1" selected>Enabled</option>
+                              <option value="0">Disabled</option>
+                          {% else %}
+                                <option value="1">Enabled</option>
+                              <option value="0" selected>Disabled</option>
+                          {% endif %}
+                      </select>
+
+                    <input  class="form-control {% if stream is None %} hidden{% endif %}"
+                            type="text" {% if stream is None %} disabled {% endif %}
+                           value="{{ stream|default:'' }}" id="stream" name="stream"
+                           placeholder="tar #Optional#Please enable this and disable all other options here, for tar streaming">
                   </div>
                 </div>
 
@@ -376,7 +501,7 @@
                   <label for="xbstream_options" class="col-sm-2 control-label">xbstream_options:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xbstream_options }}" id="xbstream_options" name="xbstream_options"  />
+                    <input class="form-control"type="text" value="{{ xbstream_options }}" id="xbstream_options" name="xbstream_options" placeholder="-x --parallel=100" />
                   </div>
                 </div>
 
@@ -384,7 +509,7 @@
                   <label for="xbs_decrypt" class="col-sm-2 control-label">xbs_decrypt:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xbs_decrypt }}" id="xbs_decrypt" name="xbs_decrypt"  >
+                    <input class="form-control"type="text" value="{{ xbs_decrypt }}" id="xbs_decrypt" name="xbs_decrypt" placeholder="1" >
                   </div>
                 </div>
 
@@ -393,7 +518,7 @@
                   <label for="remote_stream" class="col-sm-2 control-label">remote_stream:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ remote_stream }}" id="remote_stream" name="remote_stream"  >
+                    <input class="form-control"type="text" value="{{ remote_stream }}" id="remote_stream" name="remote_stream" placeholder="ssh xxx.xxx.xxx.xxx # WARN, enable this, if you want to stream your backups to remote host" >
                   </div>
                 </div>
 
@@ -409,13 +534,13 @@
 {#                </div>#}
 
 
-                <div class="form-group">
-                  <label for="remote_dir" class="col-sm-2 control-label">remote_dir:</label>
-
-                  <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ remote_dir }}" id="remote_dir" name="remote_dir"  >
-                  </div>
-                </div>
+{#                <div class="form-group">#}
+{#                  <label for="remote_dir" class="col-sm-2 control-label">remote_dir:</label>#}
+{##}
+{#                  <div class="col-sm-9">#}
+{#                    <input class="form-control"type="text" value="{{ remote_dir }}" id="remote_dir" name="remote_dir"  >#}
+{#                  </div>#}
+{#                </div>#}
 
                     <hr>
                     <p><b style="margin-left: 5px">[Commands]</b></p>
@@ -423,7 +548,7 @@
                   <label for="start_mysql_command" class="col-sm-2 control-label">start_mysql_command:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ start_mysql_command }}" id="start_mysql_command" name="start_mysql_command"  >
+                    <input class="form-control"type="text" value="{{ start_mysql_command }}" id="start_mysql_command" name="start_mysql_command" placeholder="service mysql start" >
                   </div>
                 </div>
 
@@ -432,14 +557,14 @@
                   <label for="stop_mysql_command" class="col-sm-2 control-label">stop_mysql_command:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ stop_mysql_command }}" id="stop_mysql_command" name="stop_mysql_command"  >
+                    <input class="form-control"type="text" value="{{ stop_mysql_command }}" id="stop_mysql_command" name="stop_mysql_command" placeholder="service mysql stop" >
                   </div>
                 </div>
                     <div class="form-group">
                   <label for="chown_command" class="col-sm-2 control-label">chown_command:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ chown_command }}" id="chown_command" name="chown_command"  >
+                    <input class="form-control"type="text" value="{{ chown_command }}" id="chown_command" name="chown_command" placeholder="chown -R mysql:mysql" >
                   </div>
                 </div>
 
