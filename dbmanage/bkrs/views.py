@@ -765,5 +765,10 @@ def received_backup_info(request):
                 return HttpResponse("Your push have errors, Please Check your data!")
 
 
-def crontab_edit(request,):
+def crontab_edit(request,ff):
     return render(request,'bkrs/crontab_edit.html',locals())
+
+
+
+def xtrabackup_edit(request,ff):
+    return render(request,'bkrs/xtrabackup_edit.html',locals())

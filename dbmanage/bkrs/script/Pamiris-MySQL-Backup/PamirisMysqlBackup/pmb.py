@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import getopt, ConfigParser,hashlib
-import logging
 import logging.config
 import glob
 import subprocess
@@ -15,6 +14,7 @@ import os
 import time
 import struct
 import sys
+import pymysql
 
 
 instance_id = 7
@@ -192,7 +192,8 @@ def get_backup_conn_info():
 
     t = repr(time.time())
 
-    r = requests.get('http://{0}/dbmanage/backup_manage/received/backup_info/'.format(server_ip),params={'instance_id':instance_id,'token':token,'t':t})
+    r = requests.get('http://{0}/dbmanage/backup_manage/received/backup_info/'.format(server_ip),
+                     params={'instance_id':instance_id,'token':token,'t':t})
     print r
     if r.status_code != 200:
         result['error'] = r.content

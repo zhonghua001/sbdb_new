@@ -1,7 +1,12 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'crontab/js/angular.min.js' %}"></script>
+    <script src="{% static 'crontab/js/crontab.js' %}"></script>
 
     <title>Crontab UI made by AngularJS</title>
     <style>
@@ -18,9 +23,7 @@
 <body ng-controller="CrontabController">
 <div class="modal-dialog">
     <div class="modal-content">
-        <div class="modal-header">
-            <h4>Create crontab expression(made by AngularJS)</h4>
-        </div>
+
         <div class="modal-body">
             <div class="form-group clearfix">
                 <div class="text-center">
@@ -28,9 +31,8 @@
                 </div>
             </div>
             <div class="form-group text-center">
-                <label style="font-size: 2em;">
-                    {{cron.min.getExpression()}}&nbsp;&nbsp;&nbsp;{{cron.hour.getExpression()}}&nbsp;&nbsp;&nbsp;
-                    {{cron.dayM.getExpression()}}&nbsp;&nbsp;&nbsp;{{cron.month.getExpression()}}&nbsp;&nbsp;&nbsp;{{cron.dayW.getExpression()}}
+                <label id="id_crontab"  style="font-size: 2em;">
+                    [[cron.min.getExpression()]]&nbsp;&nbsp;&nbsp;[[cron.hour.getExpression()]]&nbsp;&nbsp;&nbsp;[[cron.dayM.getExpression()]]&nbsp;&nbsp;&nbsp;[[cron.month.getExpression()]]&nbsp;&nbsp;&nbsp;[[cron.dayW.getExpression()]]
                 </label>
             </div>
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -43,17 +45,17 @@
                     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
                          aria-labelledby="headingOne">
                         <div class="panel-body">
-                            <p class="text-warning"> You are not allowed to change this section. </p>
+{#                            <p class="text-warning"> You are not allowed to change this section. </p>#}
 
                             <div class="radio">
                                 <label style="margin-right: 20px;">
-                                    <input type="radio" value="every" ng-model="cron.min.type" ng-disabled="true">
+                                    <input type="radio" value="every" ng-model="cron.min.type">
                                     Every </label>
                                 <label>
-                                    <input type="radio" value="everyN" ng-model="cron.min.type" ng-disabled="true">
+                                    <input type="radio" value="everyN" ng-model="cron.min.type">
                                     Every N minutes </label>
                                 <label>
-                                    <input type="radio" value="each" ng-model="cron.min.type" ng-disabled="true">
+                                    <input type="radio" value="each" ng-model="cron.min.type" >
                                     Each selected minute </label>
                             </div>
                             <div class="form-group" ng-show="cron.min.type == 'every'">
@@ -63,7 +65,7 @@
                                 <label>Every</label>
                                 <select ng-model="cron.min.n" class="form-control">
                                     <option value="">Please select</option>
-                                    <option ng-repeat="index in cron.min.range" value="{{index}}">{{index}}</option>
+                                    <option ng-repeat="index in cron.min.range" value="[[ index ]]">[[ index ]]</option>
                                 </select>
                                 minutes
                             </div>
@@ -74,15 +76,15 @@
 
                                                 ng-click="cron.min.removeSelected(col)"
 
-                                                ng-repeat="col in cron.min.labelList" ng-disabled="true">
-                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                                ng-repeat="col in cron.min.labelList" >
+                                            [[col]]&nbsp;&nbsp;<span >&times;</span></button>
                                     </div>
                                 </div>
-                                <div class="form-group hide">
+                                <div class="form-group ">
                                     <select ng-change="cron.min.appendSelected()" ng-model="cron.min.each"
                                             class="form-control">
                                         <option value="">Please select</option>
-                                        <option ng-repeat="index in cron.min.range" value="{{index}}">{{index}}</option>
+                                        <option ng-repeat="index in cron.min.range" value="[[index]]">[[index]]</option>
                                     </select>
                                 </div>
                             </div>
@@ -119,7 +121,7 @@
                                 <label>Every</label>
                                 <select ng-model="cron.hour.n" class="form-control">
                                     <option value="">Please select</option>
-                                    <option ng-repeat="index in cron.hour.range" value="{{index}}">{{index}}</option>
+                                    <option ng-repeat="index in cron.hour.range" value="[[index]]">[[index]]</option>
                                 </select>
                                 hours
                             </div>
@@ -131,14 +133,14 @@
                                                 ng-click="cron.hour.removeSelected(col)"
 
                                                 ng-repeat="col in cron.hour.labelList">
-                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                            [[col]]&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <select ng-change="cron.hour.appendSelected()" ng-model="cron.hour.each"
                                             class="form-control">
                                         <option value="">Please select</option>
-                                        <option ng-repeat="index in cron.hour.range" value="{{index}}">{{index}}
+                                        <option ng-repeat="index in cron.hour.range" value="[[index]]">[[index]]
                                         </option>
                                     </select>
                                 </div>
@@ -175,14 +177,14 @@
                                         <button type="button" class="btn btn-success" title="Click to remove"
                                                 ng-click="cron.dayM.removeSelected(col)"
                                                 ng-repeat="col in cron.dayM.labelList">
-                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                            [[col]]&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <select ng-change="cron.dayM.appendSelected()" ng-model="cron.dayM.each"
                                             class="form-control">
                                         <option value="">Please select</option>
-                                        <option ng-repeat="index in cron.dayM.range" value="{{index}}">{{index}}
+                                        <option ng-repeat="index in cron.dayM.range" value="[[index]]">[[index]]
                                         </option>
                                     </select>
                                 </div>
@@ -216,14 +218,14 @@
                                         <button type="button" class="btn btn-success" title="Click to remove"
                                                 ng-click="cron.month.removeSelected(col)"
                                                 ng-repeat="col in cron.month.labelList">
-                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                            [[col]]&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <select ng-change="cron.month.appendSelected()" ng-model="cron.month.each"
                                             class="form-control">
                                         <option value="">Please select</option>
-                                        <option ng-repeat="index in cron.month.range" value="{{index}}">{{index}}
+                                        <option ng-repeat="index in cron.month.range" value="[[index]]">[[index]]
                                         </option>
                                     </select>
                                 </div>
@@ -258,14 +260,14 @@
                                         <button type="button" class="btn btn-success" title="Click to remove"
                                                 ng-click="cron.dayW.removeSelected(col)"
                                                 ng-repeat="col in cron.dayW.labelList">
-                                            {{col}}&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
+                                            [[col]]&nbsp;&nbsp;<span aria-hidden="true">&times;</span></button>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <select ng-change="cron.dayW.appendSelected()" ng-model="cron.dayW.each"
                                             class="form-control">
                                         <option value="">Please select</option>
-                                        <option ng-repeat="index in cron.dayW.range" value="{{index}}"> {{index}}
+                                        <option ng-repeat="index in cron.dayW.range" value="[[index]]"> [[index]]
                                         </option>
                                     </select>
                                 </div>
@@ -273,13 +275,28 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-12 text-center" style="margin-top: 20px" >
+                    <button class="btn btn-primary vertical-center" style="width: 100px" id="id_set_crontab">OK</button>
+                </div>
+                </div>
+
         </div>
+
     </div>
 </div>
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/angular.min.js"></script>
-<script src="js/crontab.js"></script>
+
+
+<script type="text/javascript">
+    $("#id_set_crontab").click(function(){
+    var index = parent.layer.getFrameIndex(window.name);
+    var html = $("#id_crontab").html();
+    parent.$("#id_mysqldump_crontab").val(html.replace(/&nbsp;&nbsp;&nbsp;/g,'||'));
+    parent.layer.close(index);
+{#    alert(html)#}
+    })
+
+
+</script>
+
 </body>
 </html>
