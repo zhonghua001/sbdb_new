@@ -13,7 +13,7 @@
 
         <div id="dialog" >
         <div class="box">
-            <form class="form-horizontal" action="{% url 'config_save' %}" method="POST">
+            <form class="form-horizontal" action="{% url 'xtrabackup_edit' 1 %}" method="POST">
                       {% csrf_token %}
                 <div class="box-body">
                   <span><b style="margin-left: 5px">[MYSQL]</b></span>
@@ -21,28 +21,28 @@
                   <label for="mysql" class="col-sm-2 control-label" >mysql:</label>
 
                   <div class="col-sm-9">
-                      <input class="form-control"class="form-control" type="text" value="{{ mysql|default:'/usr/bin/mysql' }}" id="mysql" name="mysql" placeholder='/usr/bin/mysql' >
+                      <input class="form-control"class="form-control" style="color: #FF0000" type="text" value="{{ mysql|default:'/usr/bin/mysql' }}" id="mysql" name="mysql" placeholder='/usr/bin/mysql' >
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="mycnf" class="col-sm-2 control-label">mycnf:</label>
 
                   <div class="col-sm-9">
-                      <input class="form-control"type="text" value="{{ mycnf|default:'/etc/my.cnf' }}" id="mycnf" name="mycnf" placeholder='/etc/my.cnf' >
+                      <input class="form-control" type="text"  style="color: #FF0000" value="{{ mycnf|default:'/etc/my.cnf' }}" id="mycnf" name="mycnf" placeholder='/etc/my.cnf' >
                   </div>
                 </div>
                 <div class="form-group" >
                   <label for="mysqladmin" class="col-sm-2 control-label">mysqladmin:</label>
 
                   <div class="col-sm-9" >
-                    <input class="form-control"type="text" value="{{ mysqladmin|default:'/usr/bin/mysqladmin' }}" id="mysqladmin" name="mysqladmin" placeholder='/usr/bin/mysqladmin'  >
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ mysqladmin|default:'/usr/bin/mysqladmin' }}" id="mysqladmin" name="mysqladmin" placeholder='/usr/bin/mysqladmin'  >
                   </div>
                 </div>
 {#                <div class="form-group">#}
 {#                  <label for="mysql_user" class="col-sm-2 control-label">mysql_user:</label>#}
 {##}
 {#                  <div class="col-sm-9">#}
-{#                    <input class="form-control"type="text" value="{{ mysql_user }}" id="mysql_user" name="mysql_user" >#}
+{#                    <input class="form-control" type="text" value="{{ mysql_user }}" id="mysql_user" name="mysql_user" >#}
 {#                  </div>#}
 {#                </div>#}
 
@@ -50,7 +50,7 @@
 {#                  <label for="mysql_password" class="col-sm-2 control-label">mysql_password:</label>#}
 {##}
 {#                  <div class="col-sm-9">#}
-{#                    <input class="form-control"type="text" value="{{ mysql_password }}" id="mysql_password" name="mysql_password" >#}
+{#                    <input class="form-control" type="text" value="{{ mysql_password }}" id="mysql_password" name="mysql_password" >#}
 {#                  </div>#}
 {#                </div>#}
 
@@ -58,7 +58,7 @@
                   <label for="mysql_socket" class="col-sm-2 control-label">mysql_socket:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ mysql_socket|default:'/tmp/mysql.sock' }}" placeholder="/tmp/mysql.sock" id="mysql_socket" name="mysql_socket" >
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ mysql_socket|default:'/tmp/mysql.sock' }}" placeholder="/tmp/mysql.sock" id="mysql_socket" name="mysql_socket" >
                   </div>
                 </div>
 
@@ -66,7 +66,7 @@
 {#                  <label for="mysql_host" class="col-sm-2 control-label">mysql_host:</label>#}
 {##}
 {#                  <div class="col-sm-9">#}
-{#                    <input class="form-control"type="text" value="{{ mysql_host }}" id="mysql_host" name="mysql_host" >#}
+{#                    <input class="form-control" type="text" value="{{ mysql_host }}" id="mysql_host" name="mysql_host" >#}
 {#                  </div>#}
 {#                </div>#}
 
@@ -74,7 +74,7 @@
 {#                  <label for="mysql_port" class="col-sm-2 control-label">mysql_port:</label>#}
 {##}
 {#                  <div class="col-sm-9">#}
-{#                    <input class="form-control"type="text" value="{{ mysql_port }}" id="mysql_port" name="mysql_port" >#}
+{#                    <input class="form-control" type="text" value="{{ mysql_port }}" id="mysql_port" name="mysql_port" >#}
 {#                  </div>#}
 {#                </div>#}
 
@@ -82,7 +82,7 @@
                   <label for="datadir" class="col-sm-2 control-label">datadir:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ datadir|default:'/mydata/data' }}" id="datadir" name="datadir" placeholder='/mydata/data' >
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ datadir|default:'/mydata/data' }}" id="datadir" name="datadir" placeholder='/mydata/data' >
                   </div>
                 </div>
 
@@ -91,7 +91,7 @@
                 <div class="form-group">
                   <label for="pid_dir" class="col-sm-2 control-label">pid_dir:</label>
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ pid_dir|default:'/tmp/MySQL-AutoXtraBackupset' }}" id="pid_dir" name="pid_dir" placeholder='/tmp/MySQL-AutoXtraBackupset #Pid directory'  >
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ pid_dir|default:'/tmp/MySQL-AutoXtraBackupset' }}" id="pid_dir" name="pid_dir" placeholder='/tmp/MySQL-AutoXtraBackupset #Pid directory'  >
                   </div>
                 </div>
 
@@ -99,7 +99,7 @@
                   <label for="tmpdir" class="col-sm-2 control-label">tmpdir:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ tmpdir|default:'/tmp/' }}" id="tmpdir" name="tmpdir" placeholder='/tmp/ #Tempdir of backup,set a large space' >
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ tmpdir|default:'/tmp/' }}" id="tmpdir" name="tmpdir" placeholder='/tmp/ #Tempdir of backup,set a large space' >
                   </div>
                 </div>
 
@@ -107,7 +107,7 @@
                   <label for="pid_runtime_warning" class="col-sm-2 control-label">pid_runtime_warning:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ pid_runtime_warning|default:'2' }}" id="pid_runtime_warning"  placeholder='2 #Optional: set warning if pid of backup us running for longer than X' name="pid_runtime_warning" >
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ pid_runtime_warning|default:'2' }}" id="pid_runtime_warning"  placeholder='2 #Optional: set warning if pid of backup us running for longer than X' name="pid_runtime_warning" >
                   </div>
                 </div>
 
@@ -115,21 +115,21 @@
                   <label for="backupdir" class="col-sm-2 control-label">backupdir:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ backupdir|default:'/backup/xtrabackup/' }}" id="backupdir" name="backupdir" placeholder="/backup/xtrabackup/ #">
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ backupdir|default:'/backup/xtrabackup/' }}" id="backupdir" name="backupdir" placeholder="/backup/xtrabackup/ #">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="backup_tool" class="col-sm-2 control-label">backup_tool:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ backup_tool|default:'/usr/bin/xtrabacup' }}" id="backup_tool" name="backup_tool" placeholder="/usr/bin/xtrabacup" >
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ backup_tool|default:'/usr/bin/xtrabacup' }}" id="backup_tool" name="backup_tool" placeholder="/usr/bin/xtrabacup" >
                   </div>
                     </div>
                 <div class="form-group">
                   <label for="prepare_tool" class="col-sm-2 control-label">prepare_tool:</label>
 
                   <div class="col-sm-9">
-                       <select class="select form-control" >
+                       <select class="select form-control switch_on_off" >
                           {% if prepare_tool is not None %}
                               <option value="1" selected>Enabled</option>
                               <option value="0">Disabled</option>
@@ -139,7 +139,7 @@
                           {% endif %}
                       </select>
 
-                    <input class="form-control {% if prepare_tool is not None %}{% else %} hidden{% endif %}" type="text" {% if prepare_tool is not None %}{% else %}disabled {% endif %}
+                    <input class="form-control {% if prepare_tool is not None %}{% else %} hidden{% endif %}"  type="text" {% if prepare_tool is not None %}{% else %}disabled {% endif %}
                            value="{{ prepare_tool|default:'' }}" id="prepare_tool" name="prepare_tool"
                            placeholder="#Optional: specify different path/version of xtrabackup here for prepare">
                   </div>
@@ -149,7 +149,7 @@
                   <label for="xtra_prepare" class="col-sm-2 control-label">xtra_prepare:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xtra_prepare|default:'--apply-log-only' }}"
+                    <input class="form-control" type="text" style="color: #FF0000" value="{{ xtra_prepare|default:'--apply-log-only' }}"
                            id="xtra_prepare" name="xtra_prepare" placeholder="--apply-log-only" readonly>
                   </div>
                 </div>
@@ -159,7 +159,7 @@
 
                   <div class="col-sm-9">
                       <select class="select form-control" name="xtra_backup" >
-                          {% if xtra_options == '--compact' %}
+                          {% if xtra_backup == '--compact' %}
                               <option value="0" >Disabled</option>
                               <option selected value="--compact">--compact #Optional: pass additional options for backup stage</option>
                           {% else %}
@@ -194,11 +194,11 @@
                       <select class="select form-control" name="xtra_options">
                           {% if xtra_options == '--binlog-info=ON --galera-info' %}
                           <option title="Optional: pass general additional options; it will go to both for backup and prepare"
-                                  value="{{ xtra_options }}" selected>{{ xtra_options }}</option>
+                                  value="{{ xtra_options }}" selected>{{ xtra_options }} #Optional: pass general additional options; it will go to both for backup and prepare</option>
                           <option value="--no-version-check">--no-version-check</option>
                           {% else %}
                           <option title="Optional: pass general additional options; it will go to both for backup and prepare"
-                                  value="'--binlog-info=ON --galera-info'" selected>--binlog-info=ON --galera-info</option>
+                                  value="'--binlog-info=ON --galera-info'" selected>--binlog-info=ON --galera-info #Optional: pass general additional options; it will go to both for backup and prepare</option>
                           <option value="--no-version-check" selected>--no-version-check</option>
                           {% endif %}
                       </select>
@@ -210,7 +210,7 @@
                   <label for="archive_dir" class="col-sm-2 control-label">archive_dir:</label>
 
                   <div class="col-sm-9">
-                      <select class="select form-control" >
+                      <select class="select form-control switch_on_off" >
                           {% if archive_dir is not None %}
                               <option value="1" selected>Enabled</option>
                               <option value="0">Disabled</option>
@@ -220,7 +220,7 @@
                           {% endif %}
                       </select>
 
-                    <input class="form-control {% if archive_dir is None %} hidden{% endif %}" type="text" {% if archive_dir is None %}disabled hidden{% endif %}
+                    <input class="form-control {% if archive_dir is None %} hidden{% endif %}"  type="text" {% if archive_dir is None %}disabled hidden{% endif %}
                            value="{{ archive_dir|default:'' }}" id="archive_dir" name="archive_dir"
                            placeholder="/backup/xtrabackup/archived #Optional: set archive and rotation">
                   </div>
@@ -231,7 +231,7 @@
                   <label for="full_backup_interval" class="col-sm-2 control-label">full_backup_interval:</label>
 
                   <div class="col-sm-9">
-                      <select class="select form-control" >
+                      <select class="select form-control switch_on_off" >
                           {% if archive_dir is not None %}
                               <option value="1" selected>Enabled</option>
                               <option value="0">Disabled</option>
@@ -241,7 +241,7 @@
                           {% endif %}
                       </select>
 
-                    <input class="form-control {% if full_backup_interval is None %} hidden{% endif %}" type="text" {% if full_backup_interval is None %}disabled{% endif %}
+                    <input class="form-control {% if full_backup_interval is None %} hidden{% endif %}"  type="text" {% if full_backup_interval is None %}disabled{% endif %}
                            value="{{ full_backup_interval|default:'' }}" id="full_backup_interval" name="full_backup_interval"
                            placeholder="1 #full_backup_interval=1 day">
                   </div>
@@ -252,7 +252,7 @@
                   <label for="max_archive_size" class="col-sm-2 control-label">max_archive_size:</label>
 
                   <div class="col-sm-9">
-                      <select class="select form-control" >
+                      <select class="select form-control switch_on_off" >
                           {% if archive_dir is not None %}
                               <option value="1" selected>Enabled</option>
                               <option value="0">Disabled</option>
@@ -263,7 +263,7 @@
                       </select>
 
                     <input class="form-control {% if max_archive_size is None %} hidden{% endif %}"
-                           type="text" {% if max_archive_size is None %}disabled {% endif %}
+                            type="text" {% if max_archive_size is None %}disabled {% endif %}
                            value="{{ max_archive_size|default:'' }}" id="max_archive_size" name="max_archive_size"
                            placeholder="100GiB #max_archive_size=100GiB">
                   </div>
@@ -273,7 +273,7 @@
                   <label for="max_archive_duration" class="col-sm-2 control-label">max_archive_duration:</label>
 
                   <div class="col-sm-9">
-                      <select class="select form-control" >
+                      <select class="select form-control switch_on_off" >
                           {% if archive_dir is not None %}
                               <option value="1" selected>Enabled</option>
                               <option value="0">Disabled</option>
@@ -284,7 +284,7 @@
                       </select>
 
                     <input class="form-control {% if max_archive_duration is None %} hidden{% endif %}"
-                           type="text" {% if max_archive_duration is None %}disabled {% endif %}
+                            type="text" {% if max_archive_duration is None %}disabled {% endif %}
                            value="{{ max_archive_duration|default:'' }}" id="max_archive_duration" name="max_archive_duration"
                            placeholder="4 Days #max_archive_duration=4 Days">
                   </div>
@@ -294,7 +294,7 @@
                   <label for="partial_list" class="col-sm-2 control-label">partial_list:</label>
 
                   <div class="col-sm-9">
-                       <select class="select form-control" >
+                       <select class="select form-control switch_on_off" >
                           {% if archive_dir is not None %}
                               <option value="1" selected>Enabled</option>
                               <option value="0">Disabled</option>
@@ -305,7 +305,7 @@
                       </select>
 
                     <input  class="form-control {% if partial_list is None %} hidden{% endif %}"
-                            type="text" {% if partial_list is None %} disabled {% endif %}
+                             type="text" {% if partial_list is None %} disabled {% endif %}
                            value="{{ partial_list|default:'' }}" id="partial_list" name="partial_list"
                            placeholder="test.t1 test.t2 dbtest  #Optional WARNING(Enable this if you want to take partial backups).
                            Specify database names or table names.">
@@ -316,54 +316,52 @@
                     <hr>
                   <p><b style="margin-left: 5px">[Compress]</b></p>
                  <div class="form-group">
-
-                  <label for="compress_enable" class="col-sm-2 control-label">Enable:</label>
-
-                  <div class="col-sm-9">
-                      <select class="select form-control" id="compress_enable" name="compress_enable" >
-                          {% if ecrypt_enable == 1 %}
-                              <option value="1" selected>Enabled</option>
-                              <option value="0">Disable</option>
-                          {% else %}
-                              <option value="1">Enable</option>
-                              <option value="0" selected>Disabled</option>
-                          {% endif %}
-                      </select>
-                  </div>
+                      <label for="compress_enable" class="col-sm-2 control-label">Enable:</label>
+                      <div class="col-sm-9">
+                          <select class="select form-control" id="compress_enable" name="compress_enable" >
+                              {% if ecrypt_enable == 1 %}
+                                  <option value="1" selected>Enabled</option>
+                                  <option value="0">Disable</option>
+                              {% else %}
+                                  <option value="1">Enable</option>
+                                  <option value="0" selected>Disabled</option>
+                              {% endif %}
+                          </select>
+                      </div>
                 </div>
                 <div class="form-group">
                   <label for="compress" class="col-sm-2 control-label">compress:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ compress }}" id="compress" name="compress" placeholder="quicklz #Optional #Enable only if you want to use compression.">
+                    <input class="form-control " disabled type="text" value="{% if compress is not None %}{{compress }}{% else %}quicklz{% endif %}" id="compress" name="compress" placeholder="quicklz #Optional #Enable only if you want to use compression.">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="compress_chunk_size" class="col-sm-2 control-label">compress_chunk_size:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ compress_chunk_size }}" id="compress_chunk_size" name="compress_chunk_size" placeholder="65536">
+                    <input class="form-control " disabled  type="text" value="{% if compress_chunk_size is not None %}{{compress_chunk_size }}{% else %}65536{% endif %}" id="compress_chunk_size" name="compress_chunk_size" placeholder="65536">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="compress_threads" class="col-sm-2 control-label">compress_threads:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ compress_threads }}" id="compress_threads" name="compress_threads" placeholder="4">
+                    <input class="form-control " disabled  type="text" value="{% if compress_threads is not None %}{{compress_threads }}{% else %}4{% endif %}" id="compress_threads" name="compress_threads" placeholder="4">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="decompress" class="col-sm-2 control-label">decompress:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ decompress }}" id="decompress" name="decompress" placeholder="TRUE">
+                    <input class="form-control " disabled  type="text" value="{% if decompress is not None %}{{ decompress }}{% else %}TRUE{% endif %}" id="decompress" name="decompress" placeholder="TRUE">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="remove_original" class="col-sm-2 control-label">remove_original:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ remove_original }}" id="remove_original" name="remove_original" placeholder="#Enable if you want to remove .qp files after decompression.(Not available yet, will be released with XB 2.3.7 and 2.4.6)" disabled>
+                    <input class="form-control" type="text" value="{{ remove_original }}" id="remove_original" name="remove_original" placeholder="#Enable if you want to remove .qp files after decompression.(Not available yet, will be released with XB 2.3.7 and 2.4.6)" disabled>
                   </div>
                 </div>
                 <hr>
@@ -373,7 +371,7 @@
                   <label for="Enable" class="col-sm-2 control-label">Enable:</label>
 
                   <div class="col-sm-9">
-                      <select class="select form-control" id="Enable" name="encrpyt_enable" >
+                      <select class="select form-control" id="id_encrypt_enable" name="encrypt_enable" >
                           {% if ecrypt_enable == 1 %}
                               <option value="1" selected>Enabled</option>
                               <option value="0">Disabled</option>
@@ -390,7 +388,7 @@
                   <label for="xbcrypt" class="col-sm-2 control-label">xbcrypt:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xbcrypt }}" placeholder="/usr/bin/xbcrypt" id="xbcrypt" name="xbcrypt"  readonly>
+                    <input class="form-control" disabled type="text" value="{% if xbcrypt is not None %} {{xbcrypt }} {% else %}/usr/bin/xbcrypt{% endif %}" placeholder="/usr/bin/xbcrypt" id="xbcrypt" name="xbcrypt"  readonly>
 
                   </div>
                 </div>
@@ -398,7 +396,7 @@
                   <label for="encrypt" class="col-sm-2 control-label">encrypt:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{% if encrypt %} {{encrypt }} {% else %} AES256 {% endif %}" id="encrypt" name="encrypt" placeholder="AES256">
+                    <input class="form-control" disabled type="text" value="{% if encrypt is not None %} {{encrypt }} {% else %}AES256{% endif %}" id="encrypt" name="encrypt" placeholder="AES256">
                   </div>
                 </div>
 
@@ -406,7 +404,7 @@
                   <label for="encrypt_key" class="col-sm-2 control-label">encrypt_key:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ encrypt_key }}" id="encrypt_key" name="encrypt_key" placeholder="VVTBwgM4UhwkTTV98fhuj+D1zyWoA89K">
+                    <input class="form-control" disabled type="text" value="{% if encrypt_key is not None %} {{encrypt_key }} {% else %}VVTBwgM4UhwkTTV98fhuj+D1zyWoA89K{% endif %}" id="encrypt_key" name="encrypt_key" placeholder="VVTBwgM4UhwkTTV98fhuj+D1zyWoA89K">
                   </div>
                 </div>
 
@@ -414,7 +412,7 @@
                   <label for="encrypt_key_file" class="col-sm-2 control-label">encrypt_key_file:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ encrypt_key_file }}" id="encrypt_key_file" name="encrypt_key_file" placeholder="/path/to/file/with_encrypt_key">
+                    <input class="form-control" disabled type="text" value="{% if encrypt_key_file is not None %} {{encrypt_key_file }} {% else %}/path/to/file/with_encrypt_key{% endif %}" id="encrypt_key_file" name="encrypt_key_file" placeholder="/path/to/file/with_encrypt_key">
                   </div>
                 </div>
 
@@ -422,7 +420,7 @@
                   <label for="encrypt_threads" class="col-sm-2 control-label">encrypt_threads:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ encrypt_threads }}" id="encrypt_threads" name="encrypt_threads" placeholder="4">
+                    <input class="form-control" disabled type="text" value="{% if encrypt_threads is not None %} {{encrypt_threads }} {% else %}4{% endif %}" id="encrypt_threads" name="encrypt_threads" placeholder="4">
                   </div>
                 </div>
 
@@ -430,7 +428,7 @@
                   <label for="encrypt_chunk_size" class="col-sm-2 control-label">encrypt_chunk_size:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ encrypt_chunk_size }}" id="encrypt_chunk_size" name="encrypt_chunk_size" placeholder="65536">
+                    <input class="form-control" disabled type="text" value="{% if encrypt_chunk_size is not None %} {{encrypt_chunk_size }} {% else %}65536{% endif %}" id="encrypt_chunk_size" name="encrypt_chunk_size" placeholder="65536">
                   </div>
                 </div>
 
@@ -438,7 +436,7 @@
                   <label for="decrypt" class="col-sm-2 control-label">decrypt:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ decrypt }}" id="decrypt" name="decrypt" placeholder="AES256">
+                    <input class="form-control" disabled type="text" value="{% if decrypt is not None %} {{decrypt }} {% else %}AES256{% endif %}" id="decrypt" name="decrypt" placeholder="AES256">
                   </div>
                 </div>
 
@@ -447,7 +445,7 @@
                   <label for="remove_original" class="col-sm-2 control-label">remove_original:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ remove_original }}" id="remove_original" name="remove_original" placeholder="FALSE #Enable if you want to remove .qp files after decompression.(Not available yet, will be released with XB 2.3.7 and 2.4.6)">
+                    <input class="form-control" type="text" value="{{ remove_original }}" id="remove_original" name="remove_original" placeholder="FALSE #Enable if you want to remove .qp files after decompression.(Not available yet, will be released with XB 2.3.7 and 2.4.6)">
                   </div>
                 </div>
                     <hr>
@@ -472,7 +470,7 @@
                   <label for="log" class="col-sm-2 control-label">xbstream:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xbstream }}" id="xbstream" name="xbstream"  placeholder="/usr/bin/xbstream #Enable this, if you want to stream your backups">
+                    <input class="form-control"  type="text" value="{{ xbstream }}" id="xbstream" name="xbstream"  placeholder="/usr/bin/xbstream #Enable this, if you want to stream your backups">
                   </div>
                 </div>
 
@@ -480,18 +478,18 @@
                   <label for="stream" class="col-sm-2 control-label">stream:</label>
 
                   <div class="col-sm-9">
-                      <select class="select form-control" >
+                      <select class="select form-control switch_on_off" >
                           {% if stream is not None %}
-                              <option value="1" selected>Enabled</option>
+                              <option value="tar" selected>Enabled Tar</option>
                               <option value="0">Disabled</option>
                           {% else %}
-                                <option value="1">Enabled</option>
+                                <option value="tar">Enabled Tar</option>
                               <option value="0" selected>Disabled</option>
                           {% endif %}
                       </select>
 
                     <input  class="form-control {% if stream is None %} hidden{% endif %}"
-                            type="text" {% if stream is None %} disabled {% endif %}
+                             type="text" {% if stream is None %} disabled {% endif %}
                            value="{{ stream|default:'' }}" id="stream" name="stream"
                            placeholder="tar #Optional#Please enable this and disable all other options here, for tar streaming">
                   </div>
@@ -501,7 +499,7 @@
                   <label for="xbstream_options" class="col-sm-2 control-label">xbstream_options:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xbstream_options }}" id="xbstream_options" name="xbstream_options" placeholder="-x --parallel=100" />
+                    <input class="form-control" type="text" value="{{ xbstream_options }}" id="xbstream_options" name="xbstream_options" placeholder="-x --parallel=100" />
                   </div>
                 </div>
 
@@ -509,7 +507,7 @@
                   <label for="xbs_decrypt" class="col-sm-2 control-label">xbs_decrypt:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ xbs_decrypt }}" id="xbs_decrypt" name="xbs_decrypt" placeholder="1" >
+                    <input class="form-control"  type="text" value="{{ xbs_decrypt }}" id="xbs_decrypt" name="xbs_decrypt" placeholder="1" >
                   </div>
                 </div>
 
@@ -518,7 +516,7 @@
                   <label for="remote_stream" class="col-sm-2 control-label">remote_stream:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ remote_stream }}" id="remote_stream" name="remote_stream" placeholder="ssh xxx.xxx.xxx.xxx # WARN, enable this, if you want to stream your backups to remote host" >
+                    <input class="form-control"  type="text" value="{{ remote_stream }}" id="remote_stream" name="remote_stream" placeholder="ssh xxx.xxx.xxx.xxx # WARN, enable this, if you want to stream your backups to remote host" >
                   </div>
                 </div>
 
@@ -529,7 +527,7 @@
 {#                  <label for="remote_conn" class="col-sm-2 control-label">remote_conn:</label>#}
 {##}
 {#                  <div class="col-sm-9">#}
-{#                    <input class="form-control"type="text" value="{{ remote_conn }}" id="remote_conn" name="remote_conn"  >#}
+{#                    <input class="form-control" type="text" value="{{ remote_conn }}" id="remote_conn" name="remote_conn"  >#}
 {#                  </div>#}
 {#                </div>#}
 
@@ -538,7 +536,7 @@
 {#                  <label for="remote_dir" class="col-sm-2 control-label">remote_dir:</label>#}
 {##}
 {#                  <div class="col-sm-9">#}
-{#                    <input class="form-control"type="text" value="{{ remote_dir }}" id="remote_dir" name="remote_dir"  >#}
+{#                    <input class="form-control" type="text" value="{{ remote_dir }}" id="remote_dir" name="remote_dir"  >#}
 {#                  </div>#}
 {#                </div>#}
 
@@ -548,7 +546,8 @@
                   <label for="start_mysql_command" class="col-sm-2 control-label">start_mysql_command:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ start_mysql_command }}" id="start_mysql_command" name="start_mysql_command" placeholder="service mysql start" >
+                    <input class="form-control"  type="text" value="{% if start_mysql_command is None  %}service mysql start{% else %}{{ start_mysql_command }}{% endif %}"
+                           id="start_mysql_command" name="start_mysql_command" placeholder="service mysql start" >
                   </div>
                 </div>
 
@@ -557,14 +556,16 @@
                   <label for="stop_mysql_command" class="col-sm-2 control-label">stop_mysql_command:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ stop_mysql_command }}" id="stop_mysql_command" name="stop_mysql_command" placeholder="service mysql stop" >
+                    <input class="form-control"  type="text" value="{% if stop_mysql_command is None  %}service mysql stop{% else %}{{ stop_mysql_command }}{% endif %}"
+                           id="stop_mysql_command" name="stop_mysql_command" placeholder="service mysql stop" >
                   </div>
                 </div>
                     <div class="form-group">
                   <label for="chown_command" class="col-sm-2 control-label">chown_command:</label>
 
                   <div class="col-sm-9">
-                    <input class="form-control"type="text" value="{{ chown_command }}" id="chown_command" name="chown_command" placeholder="chown -R mysql:mysql" >
+                    <input class="form-control"  type="text" value="{% if chown_command is None  %}chown -R mysql:mysql{% else %}{{ chown_command }}{% endif %}"
+                           id="chown_command" name="chown_command" placeholder="chown -R mysql:mysql" >
                   </div>
                 </div>
 
@@ -583,5 +584,59 @@
 
     </div>
     </div>
+<script>
+    $(".switch_on_off").change(function(){
+        var input = $(this).parent().children('input');
+        if($(this).val() === '1'){
+            $(input).removeClass('hidden');
+            $(input).removeAttr('disabled');
+        }
+        else{$(input).addClass('hidden');
+            $(input).attr('disabled','disabled');
+        }
+
+    })
+
+    $("#compress_enable").change(function(){
+        if($(this).val() === '1'){
+
+            $("#compress").removeAttr('disabled');
+            $("#compress_chunk_size").removeAttr('disabled');
+            $("#compress_threads").removeAttr('disabled');
+            $("#decompress").removeAttr('disabled');
+        }
+        else{
+            $("#compress").attr('disabled','disabled');
+            $("#compress_chunk_size").attr('disabled','disabled');
+            $("#compress_threads").attr('disabled','disabled');
+            $("#decompress").attr('disabled','disabled');
+        }
+{#        border: 1px solid #a0085d;#}
+    })
+    $("#id_encrypt_enable").change(function(){
+        if($(this).val() === '1'){
+
+            $("#xbcrypt").removeAttr('disabled');
+            $("#encrypt").removeAttr('disabled');
+            $("#encrypt_key").removeAttr('disabled');
+            $("#encrypt_key_file").removeAttr('disabled');
+            $("#encrypt_threads").removeAttr('disabled');
+            $("#encrypt_chunk_size").removeAttr('disabled');
+            $("#decrypt").removeAttr('disabled');
+        }
+        else{
+            $("#xbcrypt").attr('disabled','disabled');
+            $("#encrypt").attr('disabled','disabled');
+            $("#encrypt_key").attr('disabled','disabled');
+            $("#encrypt_key_file").attr('disabled','disabled');
+            $("#encrypt_threads").attr('disabled','disabled');
+            $("#encrypt_chunk_size").attr('disabled','disabled');
+
+        }
+    })
+
+
+
+</script>
 </body>
 </html>
