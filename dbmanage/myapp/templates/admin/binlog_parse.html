@@ -4,8 +4,11 @@
     <title>BINLOG PARSE</title>
 {% endblock %}
 {% block name %}
-
-
+{#<script src="{% static 'js/jquery.min.js' %}"></script>#}
+{##}
+{#       <script type="text/javascript" src="{% static 'jedate/jquery-1.7.2.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'jedate/jquery.jedate.js' %}"></script>#}
+{#    <link type="text/css" rel="stylesheet" href="{% static 'jedate/skin/jedate.css' %}">#}
 
     欢迎使用<span style="color:red">BINLOG解析</span>功能
 {% endblock %}
@@ -396,25 +399,25 @@ function Change() {
 
 var start = {
     format:"YYYY-MM-DD hh:mm:ss",
-    initDate:[{YYYY:2015,MM:12,DD:23,hh:10,mm:0,ss:0},true],
+{#    initDate:[{YYYY:2015,MM:12,DD:23,hh:10,mm:0,ss:0},true],#}
     isinitVal:true,
 {#    hmsLimit:false,#}
     festival: true,
     isTime:true, //isClear:false,
-    startMin:'',
-    minDate:'',
-    maxDate:''
+{#    startMin:'',#}
+{#    minDate:'',#}
+{#    maxDate:''#}
 };
 var end = {
     format:"YYYY-MM-DD hh:mm:ss",
-    initDate:[{YYYY:2015,MM:12,DD:23,hh:10,mm:0,ss:0},true],
+{#    initDate:[{YYYY:2015,MM:12,DD:23,hh:10,mm:0,ss:0},true],#}
     isinitVal:true,
     hmsLimit:false,
     festival: true,
     isTime:true, //isClear:false,
-    startMin:'',
-    minDate:'',
-    maxDate:''
+{#    startMin:'',#}
+{#    minDate:'',#}
+{#    maxDate:''#}
 };
 function tip(){
 //小tips
@@ -426,8 +429,8 @@ layer.msg('同上', {
 });
 
 }
- $("#id_begin_time").jeDate(start);
-               $("#id_end_time").jeDate(end);
+$("#id_begin_time").jeDate(start);
+$("#id_end_time").jeDate(end);
 
 
 $("#id_binary_start").change(function () {

@@ -1,221 +1,167 @@
-<!DOCTYPE html>
 {% load static %}
+<!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>layui</title>
-  <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="stylesheet" href="{% static 'layui/layui.css' %}"  media="all">
-  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>jeDate日期控件</title>
+<script type="text/javascript" src="{% static 'jedate/jquery-1.7.2.js' %}"></script>
+<script type="text/javascript" src="{% static 'jedate/jquery.jedate.js' %}"></script>
+<link type="text/css" rel="stylesheet" href="{%  static 'jedate/skin/jedate.css' %}">
+<style>
+.bodys{ padding:50px 0 0 50px;}
+.datainp{ width:200px; height:30px; border:1px #A5D2EC solid;}
+.datep{ margin-bottom:40px; line-height:24px; margin-right:15px;}
+.wicon{background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8xNS8xNGnF/oAAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAoElEQVQ4jWPceOnNfwYqAz9dYRQ+E7UtwAaGjyUsDAyYYUgJ2HT5LXZLcEmSCnA6duOlN///////H0bDALl8dPH/////Z8FuNW6Qtvw2nL3lyjsGBgYGhlmRqnj1kGwJuqHIlhJlCXq8EOITEsdqCXLEbbr8FisfFkTo+vBZRFZwERNEFFkCiw90nxJtCalxQmzegltCzVyP1RJq5HZ8AABuNZr0628DMwAAAABJRU5ErkJggg=="); background-repeat:no-repeat; background-position:right center;}
+</style>
 </head>
-<body>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-  <legend>水平导航菜单</legend>
-</fieldset>
-
-<ul class="layui-nav">
-  <li class="layui-nav-item"><a href="">最新活动</a></li>
-  <li class="layui-nav-item layui-this">
-    <a href="javascript:;">产品</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">选项1</a></dd>
-      <dd><a href="">选项2</a></dd>
-      <dd><a href="">选项3</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item"><a href="">大数据</a></li>
-  <li class="layui-nav-item">
-    <a href="javascript:;">解决方案</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">移动模块</a></dd>
-      <dd><a href="">后台模版</a></dd>
-      <dd class="layui-this"><a href="">选中项</a></dd>
-      <dd><a href="">电商平台</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item"><a href="">社区</a></li>
+<body class="bodys">
+<div style="width:100%; margin-bottom:50px; overflow:hidden;">
+<ul>
+<li class="datep"><a href="http://www.jayui.com/jedate/">详细日期控件API</a></li>
+<li class="datep" style="width:700px;">jeDate除了包含初始化日期加减N、日期标注点、输入框可以直接输入时间、设定年月（YYYY-MM）、日期范围限制、开始日期设定、自定义日期格式、时间戳转换、当天的前后若干天返回、时分秒选择、智能响应、自动纠错、节日识别，操作等常规功能外，根据不同的日期格式，显示不同内容，还拥有更多趋近完美的解决方案。<br/><span style="color: green">您可以免费将她用于任何个人项目。但是不能去除头部信息。</span>  QQ群：516754269</li>
+<li>
+<span style="color: red">jeDate从3.5版本开始改为jquery版本的日期控件</span><br/><br/>
+<span style="color: red">此为部分个例展示，更多请看</span> <a href="http://www.jayui.com/jedate/">详细日期控件API</a>。<br/><br/>
+</li>
+<!--<input type="checkbox" formatval="YYYY-MM-DD" onclick="thatcheckbox(this)">-->
+    <!--<li class="datep"><input class="datainp" id="inyear" type="text" placeholder="YYYY-MM-DD hh:mm:ss" value=""  readonly></li>-->
+    <li class="datep"><input class="datainp wicon" id="optsdate" type="text" placeholder="开始日期" value=""  readonly></li>
+    <li class="datep"><input class="datainp wicon" id="inpstart" type="text" placeholder="开始日期" value=""  readonly></li>
+    <li class="datep"><input class="datainp wicon" id="inpend" type="text" placeholder="结束日期"   readonly></li>
+    <li class="datep"><input class="datainp wicon" id="date01" type="text" placeholder="YYYY-MM-DD hh:mm:ss" value=""  readonly></li>
+    <li class="datep"><input class="datainp wicon" id="date02" type="text" placeholder="YYYY-MM-DD hh:mm" value=""  readonly></li>
+    <li class="datep"><input class="datainp wicon" id="date03" type="text" placeholder="YYYY-MM-DD"  readonly></li>
+    <li class="datep"><input class="datainp wicon" id="date04" type="text" placeholder="YYYY-MM"  readonly></li>
+    <li class="datep"><input class="datainp wicon" id="date05" type="text" placeholder="hh:mm:ss"  readonly></li>
+    <li class="datep"><input class="datainp wicon" id="test"  type="text" placeholder="hh:mm" onclick="testShow(this)"  readonly></li>
 </ul>
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-  <legend>导航带徽章和图片</legend>
-</fieldset>
-
-<ul class="layui-nav">
-  <li class="layui-nav-item">
-    <a href="">控制台<span class="layui-badge">9</span></a>
-  </li>
-  <li class="layui-nav-item">
-    <a href="">个人中心<span class="layui-badge-dot"></span></a>
-  </li>
-  <li class="layui-nav-item" lay-unselect="">
-    <a href="javascript:;"><img src="http://t.cn/RCzsdCq" class="layui-nav-img">我</a>
-    <dl class="layui-nav-child">
-      <dd><a href="javascript:;">修改信息</a></dd>
-      <dd><a href="javascript:;">安全管理</a></dd>
-      <dd><a href="javascript:;">退了</a></dd>
-    </dl>
-  </li>
-</ul>
-<div style="margin-top: 15px;">
-
-<!-- 示例-970 -->
-<ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px" data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
-
 </div>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-  <legend>更多导航主题</legend>
-</fieldset>
+<script type="text/javascript">
+var cancel ={
+    minDate:'2015-06-16 23:59:59',
+    maxDate:'2017-02-16 23:59:59'
+}
+var opts = $.extend({
+     type:"je",
+     minDate:undefined,
+     maxDate:undefined
+},cancel);
+if (opts.type == "je") {
+    $("#optsdate").jeDate({
+        isinitVal: true,
+        festival: true,
+        ishmsVal: false,
+        minDate: opts.minDate,
+        maxDate: opts.maxDate,
+        format: "YYYY-MM-DD hh:mm",
+        zIndex: 3000
+    })
+}
 
-<ul class="layui-nav layui-bg-cyan">
-  <li class="layui-nav-item"><a href="">藏青导航</a></li>
-  <li class="layui-nav-item layui-this"><a href="">产品</a></li>
-  <li class="layui-nav-item"><a href="">大数据</a></li>
-  <li class="layui-nav-item">
-    <a href="javascript:;">解决方案</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">移动模块</a></dd>
-      <dd><a href="">后台模版</a></dd>
-      <dd><a href="">电商平台</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item"><a href="">社区</a></li>
-</ul>
-<br>
-<ul class="layui-nav layui-bg-green">
-  <li class="layui-nav-item"><a href="">墨绿导航</a></li>
-  <li class="layui-nav-item layui-this"><a href="">产品</a></li>
-  <li class="layui-nav-item"><a href="">大数据</a></li>
-  <li class="layui-nav-item">
-    <a href="javascript:;">解决方案</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">移动模块</a></dd>
-      <dd><a href="">后台模版</a></dd>
-      <dd><a href="">电商平台</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item"><a href="">社区</a></li>
-</ul>
-<br>
-<ul class="layui-nav layui-bg-blue">
-  <li class="layui-nav-item"><a href="">艳蓝导航</a></li>
-  <li class="layui-nav-item layui-this"><a href="">产品</a></li>
-  <li class="layui-nav-item"><a href="">大数据</a></li>
-  <li class="layui-nav-item">
-    <a href="javascript:;">解决方案</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">移动模块</a></dd>
-      <dd><a href="">后台模版</a></dd>
-      <dd><a href="">电商平台</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item"><a href="">社区</a></li>
-</ul>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-  <legend>垂直导航菜单</legend>
-</fieldset>
 
-<ul class="layui-nav layui-nav-tree layui-inline" lay-filter="demo" style="margin-right: 10px;">
-  <li class="layui-nav-item layui-nav-itemed">
-    <a href="javascript:;">默认展开</a>
-    <dl class="layui-nav-child">
-      <dd><a href="javascript:;">选项一</a></dd>
-      <dd><a href="javascript:;">选项二</a></dd>
-      <dd><a href="javascript:;">选项三</a></dd>
-      <dd><a href="">跳转项</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item">
-    <a href="javascript:;">解决方案</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">移动模块</a></dd>
-      <dd><a href="">后台模版</a></dd>
-      <dd><a href="">电商平台</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item"><a href="">云市场</a></li>
-  <li class="layui-nav-item"><a href="">社区</a></li>
-</ul>
-<ul class="layui-nav layui-nav-tree layui-bg-cyan layui-inline" lay-filter="demo">
-  <li class="layui-nav-item layui-nav-itemed">
-    <a href="javascript:;">默认展开</a>
-    <dl class="layui-nav-child">
-      <dd><a href="javascript:;">选项一</a></dd>
-      <dd><a href="javascript:;">选项二</a></dd>
-      <dd><a href="javascript:;">选项三</a></dd>
-      <dd><a href="">跳转项</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item">
-    <a href="javascript:;">解决方案</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">移动模块</a></dd>
-      <dd><a href="">后台模版</a></dd>
-      <dd><a href="">电商平台</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item"><a href="">云市场</a></li>
-  <li class="layui-nav-item"><a href="">社区</a></li>
-</ul>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-  <legend>侧边固定导航菜单</legend>
-</fieldset>
 
-← 囖，就左边那家伙！ 带图标神马的那是必须可以的。另外你可能还需要下拉菜单，这个将在下版本推出！
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-  <legend>默认面包屑</legend>
-</fieldset>
 
-<span class="layui-breadcrumb">
-  <a href="/">首页</a>
-  <a href="/demo/">演示</a>
-  <a><cite>导航元素</cite></a>
-</span>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-  <legend>自定义分隔符的面包屑</legend>
-</fieldset>
 
-<span class="layui-breadcrumb" lay-separator="—">
-  <a href="">首页</a>
-  <a href="">国际新闻</a>
-  <a href="">亚太地区</a>
-  <a><cite>正文</cite></a>
-</span>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-  <legend>还可以用于门户频道的面包屑</legend>
-</fieldset>
 
-<span class="layui-breadcrumb" lay-separator="|">
-  <a href="">娱乐</a>
-  <a href="">八卦</a>
-  <a href="">体育</a>
-  <a href="">搞笑</a>
-  <a href="">视频</a>
-  <a href="">游戏</a>
-  <a href="">综艺</a>
-</span>
 
-<p class="layui-elem-quote">其实就是自定义了个“|”的分隔符，然后最后一项也可以点。</p>
 
-<script src="//res.layui.com/layui/dist/layui.js" charset="utf-8"></script>
-<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
-<script>
-layui.use('element', function(){
-  var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
 
-  //监听导航点击
-  element.on('nav(demo)', function(elem){
-    //console.log(elem)
-    layer.msg(elem.text());
-  });
-});
+
+var start = {
+    format: 'YYYY-MM-DD hh:mm:ss',
+    minDate: '2014-06-16 23:59:59', //设定最小日期为当前日期
+    festival:true,
+    //isinitVal:true,
+    maxDate: $.nowDate(0), //最大日期
+    choosefun: function(elem,datas){
+        end.minDate = datas; //开始日选好后，重置结束日的最小日期
+    },
+    okfun:function (elem,datas) {
+        alert(datas)
+    }
+};
+var end = {
+    format: 'YYYY年MM月DD日 hh:mm:ss',
+    minDate: $.nowDate(0), //设定最小日期为当前日期
+    festival:true,
+    //isinitVal:true,
+    maxDate: '2099-06-16 23:59:59', //最大日期
+    choosefun: function(elem,datas){
+        start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
+    }
+};
+$("#inpstart").jeDate(start);
+$("#inpend").jeDate(end);
+
+
+$("#date01").jeDate({
+    isinitVal:true,
+    festival:true,
+    ishmsVal:false,
+    minDate: '2016-06-16 23:59:59',
+    maxDate: $.nowDate(0),
+    format:"YYYY-MM-DD hh:mm:ss",
+    zIndex:3000,
+})
+$("#date02").jeDate({
+    isinitVal:true,
+    festival:true,
+    ishmsVal:false,
+    minDate: '2016-06-16 23:59:59',
+    maxDate: $.nowDate(0),
+    format:"YYYY-MM-DD hh:mm",
+    zIndex:3000,
+})
+$("#date03").jeDate({
+    isinitVal:true,
+    festival:true,
+    ishmsVal:false,
+    minDate: '2016-06-16 23:59:59',
+    maxDate: $.nowDate(0),
+    format:"YYYY-MM-DD",
+    zIndex:3000,
+})
+$("#date04").jeDate({
+    isinitVal:true,
+    festival:true,
+    ishmsVal:false,
+    minDate: '2016-06-16 23:59:59',
+    maxDate: $.nowDate(0),
+    format:"YYYY-MM",
+    zIndex:3000,
+})
+$("#date05").jeDate({
+    isinitVal:true,
+    festival:true,
+    ishmsVal:false,
+    minDate: '2016-06-16 23:59:59',
+    maxDate: $.nowDate(0),
+    format:"hh:mm:ss",
+    zIndex:3000,
+})
+
+
+    function testShow(elem){
+        $.jeDate(elem,{
+            insTrigger:false,
+            isinitVal:true,
+            festival:true,
+            ishmsVal:false,
+            minDate: '2016-06-16 23:59:59',
+            maxDate: $.nowDate(0),
+            format:"hh:mm",
+            zIndex:3000,
+        })
+    }
+
 </script>
 
 </body>

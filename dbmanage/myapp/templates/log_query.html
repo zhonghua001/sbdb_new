@@ -16,12 +16,12 @@
     <table >
         <tr>
             <td>
-                </br>
-                </br>
+                <br/>
+                <br/>
 
                 <form role="form" method='post'>
                     {% csrf_token %}
-                    CHOOSE:</br>
+                    CHOOSE:<br/>
 
   <select id="id_select_group" onchange="change_group(-1,{{ select_group|default:0 }},'{{ select_host|default:0 }}')" class="form-control col-md-12"  name = "select_group">
                                 <option value ="" selected disabled >---Select Host Group---</option>
@@ -108,14 +108,14 @@
             isinitVal:true,
             isTime:true, //isClear:false,
             minDate:"2014-09-19 00:00:00",
-            okfun:function(val){alert(val)}
+{#            okfun:function(val){alert(val)}#}
         })
         $("#id_end").jeDate({
             format:"YYYY-MM-DD hh:mm:ss",
             isinitVal:true,
             isTime:true, //isClear:false,
             minDate:"2014-09-19 00:00:00",
-            okfun:function(val){alert(val)}
+{#            okfun:function(val){alert(val)}#}
         })
     </script>
     {% block script %}
