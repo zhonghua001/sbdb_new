@@ -24,7 +24,7 @@ usage: mysql_binlog_stat.py [-h] [--host HOST] [--port PORT]
                             [--username USERNAME] [--password PASSWORD]
                             [--log-file binlog-file-name]
                             [--log-pos binlog-file-pos]
-                            [--server-id server-id] [--slave-uuid slave-uuid]
+                            [--server-id server-id] [--subordinate-uuid subordinate-uuid]
                             [--blocking False/True] [--start-time start-time]
                             [--sorted-by insert/update/delete]
 
@@ -41,9 +41,9 @@ optional arguments:
   --log-pos binlog-file-pos
                         Specify a binlog file pos
   --server-id server-id
-                        Specify a slave server server-id
-  --slave-uuid slave-uuid
-                        Specify a slave server uuid
+                        Specify a subordinate server server-id
+  --subordinate-uuid subordinate-uuid
+                        Specify a subordinate server uuid
   --blocking False/True
                         Specify is bloking and parse, default False
   --start-time start-time
@@ -773,14 +773,14 @@ def parse_args():
     parser.add_argument('--log-pos', dest='log_pos', action='store',
                         default=None, help='Specify a binlog file pos',
                         metavar='binlog-file-pos', type=int)
-    # 添加 slave server id 参数
+    # 添加 subordinate server id 参数
     parser.add_argument('--server-id', dest='server_id', action='store',
-                        default=99999, help='Specify a slave server server-id',
+                        default=99999, help='Specify a subordinate server server-id',
                         metavar='server-id', type=int)
-    # 添加 slave uuid 参数
-    parser.add_argument('--slave-uuid', dest='slave_uuid', action='store',
+    # 添加 subordinate uuid 参数
+    parser.add_argument('--subordinate-uuid', dest='subordinate_uuid', action='store',
                         default='ca1e2b93-5d2f-11e6-b758-0800277643c8',
-                        help='Specify a slave server uuid', metavar='slave-uuid')
+                        help='Specify a subordinate server uuid', metavar='subordinate-uuid')
     # 添加 是否以阻塞的方式进行解析 参数
     parser.add_argument('--blocking', dest='blocking', action='store',
                         default=False, help='Specify is bloking and parse, default False',
@@ -847,7 +847,7 @@ def main():
     # stream_conf = {
     #     'connection_settings': mysql_settings,
     #     'server_id': args.server_id,
-    #     'slave_uuid': args.slave_uuid,
+    #     'subordinate_uuid': args.subordinate_uuid,
     #     'blocking': args.blocking,
     #     'log_file': args.log_file,
     #     'log_pos': args.log_pos,
@@ -857,7 +857,7 @@ def main():
     # stream_conf = {
     #     'connection_settings': mysql_settings,
     #     'server_id': 132,
-    #     'slave_uuid': '',
+    #     'subordinate_uuid': '',
     #     'blocking': '',
     #     'log_file': 'mysql-bin.000006',
     #     'log_pos': 4,
