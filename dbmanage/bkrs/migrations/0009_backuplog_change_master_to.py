@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='backuplog',
-            name='change_master_to',
+            name='change_main_to',
             field=models.CharField(max_length=200, null=True),
         ),
     ]

@@ -2170,8 +2170,8 @@ def mysql_admin(request):
                 data_list.pop() if len(col_list) == 1 and col_list[0]['title'] == 'error' else data_list
                 return HttpResponse(json.dumps({'data_list': data_list, 'col_list': col_list, 'success': True}))
 
-            elif request.POST['event'] == 'slavestatus':
-                sql = "show slave status"
+            elif request.POST['event'] == 'subordinatestatus':
+                sql = "show subordinate status"
                 data_list, col_list = meta.process(insname, 7,sql)
                 col_list = [{'title': t} for t in col_list]
                 data_list = [list(i) for i in data_list]
