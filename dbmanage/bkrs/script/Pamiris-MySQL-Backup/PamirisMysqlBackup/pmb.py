@@ -587,7 +587,7 @@ def _backup_full():
 
 
 
-    backup_command = 'mysqldump %s -B -R --single-transaction --master-data=2 ' \
+    backup_command = 'mysqldump %s -B -R --single-transaction --main-data=2 ' \
                      '--flush-logs -h%s -P%s -u%s --password=%s --result-file=%s.sql' % (
                         database, #config.get('Backup', 'database'),
                         db_host,
@@ -655,10 +655,10 @@ def _backup_full():
 
     else:
         logAndPrint('Compressing backup...', 'info')
-        change_master = 'grep -e  "-- CHANGE MASTER TO MASTER_LOG_FILE" {logfile}.sql'.format(logfile=file_name)
-        status, data = commands.getstatusoutput(change_master)
+        change_main = 'grep -e  "-- CHANGE MASTER TO MASTER_LOG_FILE" {logfile}.sql'.format(logfile=file_name)
+        status, data = commands.getstatusoutput(change_main)
         if status == 0:
-            result['change_master_to'] = data
+            result['change_main_to'] = data
 
         compress_command = 'gzip %s.sql' % (file_name)
         os.system(compress_command)

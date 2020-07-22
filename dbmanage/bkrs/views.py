@@ -621,7 +621,7 @@ def received_backup_info(request):
                     backup_file = received_json_data['backup_file']
                     end_backup_time = received_json_data['end_backup_time']
                     command = received_json_data['command']
-                    change_master_to = received_json_data['change_master_to']
+                    change_main_to = received_json_data['change_main_to']
                     md5 = received_json_data['md5']
                     port = received_json_data['port']
                     size = received_json_data['size']
@@ -629,9 +629,9 @@ def received_backup_info(request):
                     db_instance = Db_instance.objects.get(id=int(instance_id))
                     backuplog = BackupLog(host=db_instance, hostname=host.hostname, ip=ip, port=port, type=backup_type,
                                           start_date=begin_backup_time, finish_date=end_backup_time,
-                                          master_log_file=change_master_to.split(' ')[4].split('=')[1].split(',')[0],
-                                          master_log_pos=change_master_to.split(' ')[5].split('=')[1].split(';')[0],
-                                          change_master_to = change_master_to,
+                                          main_log_file=change_main_to.split(' ')[4].split('=')[1].split(',')[0],
+                                          main_log_pos=change_main_to.split(' ')[5].split('=')[1].split(';')[0],
+                                          change_main_to = change_main_to,
                                           backup_local_path=backup_path, backup_files=backup_file,
                                           is_tar=1, local_tar_file=backup_path+backup_file, status=backup_status,
                                           local_tar_file_md5=md5, backup_files_size=size, command=command,
@@ -685,7 +685,7 @@ def received_backup_info(request):
                     end_backup_time = received_json_data['end_backup_time']
                     kargs['end_backup_time'] = end_backup_time
                     # command = received_json_data['command']
-                    # change_master_to = received_json_data['change_master_to']
+                    # change_main_to = received_json_data['change_main_to']
                     md5 = received_json_data['md5']
                     kargs['md5'] = md5
                     port = received_json_data['port']
@@ -704,8 +704,8 @@ def received_backup_info(request):
                     db_instance = Db_instance.objects.get(id=int(instance_id))
                     backuplog = BackupLog(host=db_instance, hostname=host.hostname, ip=ip, port=port, type=backup_type,
                                           start_date=begin_backup_time, finish_date=end_backup_time,
-                                          # master_log_file=change_master_to.split(' ')[4].split('=')[1].split(',')[0],
-                                          # master_log_pos=change_master_to.split(' ')[5].split('=')[1].split(';')[0],
+                                          # main_log_file=change_main_to.split(' ')[4].split('=')[1].split(',')[0],
+                                          # main_log_pos=change_main_to.split(' ')[5].split('=')[1].split(';')[0],
                                           backup_local_path=backup_path, backup_files=backup_file,
                                           is_tar=1, local_tar_file=backup_path + backup_file, status=backup_status,
                                           local_tar_file_md5=md5, backup_files_size=size,
